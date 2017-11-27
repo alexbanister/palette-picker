@@ -1,12 +1,6 @@
 {
-  "parser": "babel-eslint",
   "extends": [
-    "react-app",
-    "eslint:recommended",
-    "plugin:react/recommended"
-  ],
-  "plugins": [
-    "react"
+    "eslint:recommended"
   ],
   "env": {
     "browser": true,
