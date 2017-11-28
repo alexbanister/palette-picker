@@ -5,9 +5,141 @@
 }
 
 body {
+  font-family: 'Montserrat', sans-serif;
   font-size: 1em;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
 }
 
-h1 {
-  color: blue;
+main {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+
+  article {
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  section {
+    display: flex;
+    align-items: center;
+    padding: 1em;
+  }
+
+  .color-dot {
+    border-radius: 50% 50% 0 50%;
+    margin: 1em;
+    height: 4em;
+    width: 4em;
+  }
+
+  .color-letter {
+    background: none;
+    text-align: center;
+    font-size: 1.5em;
+  }
+
+  .color-hex {
+    padding: 1em;
+    padding-left: 2em;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    color: #ffffff;
+    font-size: 2em;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 125em 0 0 125em;
+  }
+
+  .lock {
+    padding-left: 1em;
+    img {
+      width: 1.5em;
+    }
+  }
+}
+
+aside {
+  width: 25em;
+  padding: 1em;
+  text-align: center;
+  background: #eeeeee;
+  overflow-y: scroll;
+  h1 {
+    padding: 1em;
+  }
+  section {
+    border-top: 1px solid #252525;
+    padding-top: 1em;
+    margin-top: 1em;
+  }
+  h3 {
+    padding-bottom: .5em;
+    text-align: left;
+  }
+  h5 {
+    text-align: left;
+  }
+  label {
+    float: left;
+  }
+  input, select {
+    padding: .25em;
+    font-size: 1.25em;
+    width: 100%;
+  }
+  button {
+    padding: .25em 1em;
+    margin: .5em;
+    font-size: 1.25em;
+    border-radius: 1em;
+    height: 2em;
+  }
+  .current-palette {
+    border-radius: 1em;
+    height: 2em;
+    width: 100%;
+    margin: .5em 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    overflow: hidden;
+  }
+  .color-swatch {
+    height: 2em;
+    width: 100%;
+  }
+  .project-palettes {
+    margin: 1em 0;
+  }
+  .palette-select, .palette-delete {
+    padding: .5em 1em;
+  }
+}
+
+.color1 {
+  background: #54457F;
+  color: #54457F;
+}
+.color2 {
+  background: #AC7B84;
+  color: #AC7B84;
+}
+.color3 {
+  background: #4C243B;
+  color: #4C243B;
+}
+.color4 {
+  background: #B84A62;
+  color: #B84A62;
+}
+.color5 {
+  background: #F5A6E6;
+  color: #F5A6E6;
 }
