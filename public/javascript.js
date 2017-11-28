@@ -45,5 +45,5 @@ const toggleLocked = (e) => {
   }
 }
 
-  $('[name="shuffle-colors"]').on('click', shuffleColors);
-  $('.lock').on('click', toggleLocked);
+$('[name="shuffle-colors"]').on('click', shuffleColors);
+$('.lock').on('click', toggleLocked);
