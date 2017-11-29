@@ -47,7 +47,7 @@ app.get('/api/v1/projects/:projectId/palettes', (request, response) => {
 });
 app.post('/api/v1/projects/:projectId/palettes', (request, response) => {
   const palette = Object.assign({}, request.body, { project_id: request.params.projectId });
-
+  console.log(palette);
   for (let requiredParameter of ['name', 'color1', 'color2', 'color3', 'color4', 'color5']) {
     if (!palette[requiredParameter]) {
       return response

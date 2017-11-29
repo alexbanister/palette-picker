@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { getProjects, getPalette, postProjects, postProjects } from './api';
+import { getProjects, getPalette, postProjects, postPalette } from './api';
 
 var lockedPositions = [];
 var currentColors = [];
@@ -77,6 +77,7 @@ const loadPalettes = async (projectId) => {
 };
 
 const renderPalette = (palette) => {
+  $('.palettes').find('h4').remove();
   $('.palette-template').clone(true)
     .removeClass('palette-template')
     .addClass('project-palettes')
@@ -99,12 +100,26 @@ const createProject = async (e) => {
   $('[name="new-project"]').val('');
 };
 
+const savePalette = async (e) => {
+  e.preventDefault();
+  let palette = {
+    name: $('[name="palette-name"]').val()
+  };
+  for (var i = 1; i <= 5; i++) {
+    palette = Object.assign(palette, { [`color${i}`]: $(`[data-id="${i}"]`).find('h3').text() });
+  }
+  const id = await postPalette(palette, $('[name="current-project"]').val());
+  palette = Object.assign(palette, { id });
+  renderPalette(palette);
+};
+
 $(document).ready( () => {
   buildProjectsMenu();
   shuffleColors();
 });
 $('[name="shuffle-colors"]').on('click', shuffleColors);
 $('.lock').on('click', toggleLocked);
+$('[name="save-palette"]').on('click', savePalette);
 $('[name="create-project"]').on('click', createProject);
 $('[name="current-project"]').on('change', (e) => {
   loadPalettes(e.target.value);

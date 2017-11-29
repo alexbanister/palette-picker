@@ -20,10 +20,11 @@ export const getPalette = (projectId) => {
     .then(parsedResponse => parsedResponse);
 };
 
-export const postProjects = (name) => {
-  return fetch('/api/v1/projects', {
+export const postPalette = (palette, projectId) => {
+  console.log(palette);
+  return fetch(`/api/v1/projects/${projectId}/palettes`, {
     method:'post',
-    body: JSON.stringify({ name }),
+    body: JSON.stringify(palette),
     headers: {'Content-Type': 'application/json'}
   })
     .then(response => response.json())

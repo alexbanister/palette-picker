@@ -144,16 +144,18 @@
     <button type="button" name="shuffle-colors">Shuffle Colors</button>
     <section>
       <h3>Palette</h3>
-      <label for="palette-name">Name:</label>
-      <input type="text" name="palette-name" value="">
-      <div class="current-palette">
-        <span class="color-swatch color1"></span>
-        <span class="color-swatch color2"></span>
-        <span class="color-swatch color3"></span>
-        <span class="color-swatch color4"></span>
-        <span class="color-swatch color5"></span>
-      </div>
-      <button type="button" name="save-palette">Save</button>
+      <form>
+        <label for="palette-name">Name:</label>
+        <input type="text" name="palette-name" value="">
+        <div class="current-palette">
+          <span class="color-swatch color1"></span>
+          <span class="color-swatch color2"></span>
+          <span class="color-swatch color3"></span>
+          <span class="color-swatch color4"></span>
+          <span class="color-swatch color5"></span>
+        </div>
+        <button type="submit" name="save-palette">Save</button>
+      </form>
     </section>
     <section>
       <h3>Projects</h3>
