@@ -1,5 +1,10 @@
 import $ from 'jquery';
-import { getProjects, getPalette, postProjects, postPalette } from './api';
+import {
+  getProjects,
+  getPalette,
+  postProjects,
+  postPalette,
+  deleteProjects } from './api';
 
 var lockedPositions = [];
 var currentColors = [];
@@ -113,6 +118,12 @@ const savePalette = async (e) => {
   renderPalette(palette);
 };
 
+const deleteCurrentProject = async () => {
+  const { id } = await deleteProjects($('[name="current-project"]').val());
+  $('[name="current-project"]').find(`[value="${id}"]`).remove();
+  loadPalettes($('[name="current-project"]').val());
+};
+
 $(document).ready( () => {
   buildProjectsMenu();
   shuffleColors();
@@ -124,3 +135,4 @@ $('[name="create-project"]').on('click', createProject);
 $('[name="current-project"]').on('change', (e) => {
   loadPalettes(e.target.value);
 });
+$('[name="delete-project"]').on('click', deleteCurrentProject);

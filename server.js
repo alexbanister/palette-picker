@@ -38,6 +38,19 @@ app.post('/api/v1/projects', (request, response) => {
       response.status(500).json({ error });
     });
 });
+app.delete('/api/v1/projects/:projectId', (request, response) => {
+  const id = request.params.projectId;
+  database('palettes').where('project_id', id).del()
+    .then( () => {
+      return database('projects').where('id', id).del();
+    })
+    .then( () => {
+      response.status(200).json({ id });
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
+});
 app.get('/api/v1/projects/:projectId/palettes', (request, response) => {
   database('palettes').where('project_id', request.params.projectId).select()
     .then(palettes => response.status(200).json(palettes))

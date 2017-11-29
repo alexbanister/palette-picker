@@ -13,6 +13,11 @@ export const postProjects = (name) => {
     .then(response => response.json())
     .then(parsedResponse => parsedResponse);
 };
+export const deleteProjects = (projectId) => {
+  return fetch(`/api/v1/projects/${projectId}`, { method:'delete' })
+    .then(response => response.json())
+    .then(parsedResponse => parsedResponse);
+};
 
 export const getPalette = (projectId) => {
   return fetch(`/api/v1/projects/${projectId}/palettes`)
