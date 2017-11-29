@@ -45,5 +45,34 @@ const toggleLocked = (e) => {
   }
 };
 
+const buildProjectsMenu = async () => {
+  const allProjects = await getProjects();
+  allProjects.forEach(project => {
+    $('[name="current-project"]').append($('<option>', {
+      value: project.id,
+      text: project.name
+    }));
+  });
+};
+
+const loadPalettes = (projectId) => {
+  const currentProjectPalette = getPalette(projectId);
+};
+
+const getProjects = () => {
+  return fetch('/api/v1/projects')
+    .then(response => response.json())
+    .then(parsedResponse => parsedResponse);
+};
+
+const getPalette = (projectId) => {
+  return fetch(`/api/v1/projects/${projectId}/palettes`)
+    .then(response => response.json())
+    .then(parsedResponse => parsedResponse);
+};
+
+$(window).on('load', () => {
+  buildProjectsMenu();
+});
 $('[name="shuffle-colors"]').on('click', shuffleColors);
 $('.lock').on('click', toggleLocked);
