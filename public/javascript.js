@@ -125,12 +125,17 @@ const toggleLocked = e => {
 const buildProjectsMenu = async () => {
   const allProjects = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["b" /* getProjects */])();
   allProjects.forEach(project => {
-    __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').append(__WEBPACK_IMPORTED_MODULE_0_jquery___default()('<option>', {
-      value: project.id,
-      text: project.name
-    }));
+    renderProjectInMenu(project);
   });
   loadPalettes(allProjects[0].id);
+};
+
+const renderProjectInMenu = project => {
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').append(__WEBPACK_IMPORTED_MODULE_0_jquery___default()('<option>', {
+    value: project.id,
+    text: project.name,
+    selected: true
+  }));
 };
 
 const loadPalettes = async projectId => {
@@ -146,12 +151,20 @@ const renderPalette = palette => {
   });
 };
 
+const createProject = async e => {
+  e.preventDefault();
+  const name = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="new-project"]').val();
+  const { id } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["c" /* postProjects */])(name);
+  renderProjectInMenu({ name, id });
+};
+
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('load', () => {
   buildProjectsMenu();
   shuffleColors();
 });
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="shuffle-colors"]').on('click', shuffleColors);
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.lock').on('click', toggleLocked);
+__WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="create-project"]').on('click', createProject);
 
 /***/ }),
 /* 1 */
@@ -162,6 +175,16 @@ const getProjects = () => {
   return fetch('/api/v1/projects').then(response => response.json()).then(parsedResponse => parsedResponse);
 };
 /* harmony export (immutable) */ __webpack_exports__["b"] = getProjects;
+
+
+const postProjects = name => {
+  return fetch('/api/v1/projects', {
+    method: 'post',
+    body: JSON.stringify({ name }),
+    headers: { 'Content-Type': 'application/json' }
+  }).then(response => response.json()).then(parsedResponse => parsedResponse);
+};
+/* harmony export (immutable) */ __webpack_exports__["c"] = postProjects;
 
 
 const getPalette = projectId => {

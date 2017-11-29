@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { getProjects, getPalette } from './api';
+import { getProjects, getPalette, postProjects } from './api';
 
 var lockedPositions = [];
 var currentColors = [];
@@ -51,12 +51,17 @@ const toggleLocked = (e) => {
 const buildProjectsMenu = async () => {
   const allProjects = await getProjects();
   allProjects.forEach(project => {
-    $('[name="current-project"]').append($('<option>', {
-      value: project.id,
-      text: project.name
-    }));
+    renderProjectInMenu(project);
   });
   loadPalettes(allProjects[0].id);
+};
+
+const renderProjectInMenu = (project) => {
+  $('[name="current-project"]').append($('<option>', {
+    value: project.id,
+    text: project.name,
+    selected: true
+  }));
 };
 
 const loadPalettes = async (projectId) => {
@@ -80,9 +85,17 @@ const renderPalette = (palette) => {
     });
 };
 
+const createProject = async (e) => {
+  e.preventDefault();
+  const name = $('[name="new-project"]').val();
+  const { id } = await postProjects(name);
+  renderProjectInMenu({ name, id });
+};
+
 $(window).on('load', () => {
   buildProjectsMenu();
   shuffleColors();
 });
 $('[name="shuffle-colors"]').on('click', shuffleColors);
 $('.lock').on('click', toggleLocked);
+$('[name="create-project"]').on('click', createProject);
