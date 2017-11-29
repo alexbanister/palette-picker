@@ -1,3 +1,6 @@
+import $ from 'jquery';
+import { getProjects, getPalette } from './api';
+
 var lockedPositions = [];
 var currentColors = [];
 
@@ -53,22 +56,21 @@ const buildProjectsMenu = async () => {
       text: project.name
     }));
   });
+  loadPalettes(allProjects[0].id);
 };
 
-const loadPalettes = (projectId) => {
-  const currentProjectPalette = getPalette(projectId);
-};
-
-const getProjects = () => {
-  return fetch('/api/v1/projects')
-    .then(response => response.json())
-    .then(parsedResponse => parsedResponse);
-};
-
-const getPalette = (projectId) => {
-  return fetch(`/api/v1/projects/${projectId}/palettes`)
-    .then(response => response.json())
-    .then(parsedResponse => parsedResponse);
+const loadPalettes = async (projectId) => {
+  const currentProjectPalette = await getPalette(projectId);
+  currentProjectPalette.forEach( palette => {
+    console.log(palette);
+    const template = $('.palette-template').html();
+    $(template).find('h5').text(palette.name);
+    template.find('.color-swatch').each( (i, element) => {
+      $(element).css('background', palette[`color${i+1}`]);
+    });
+    $(template).removeClass('palette-template').addClass('project-palettes');
+    $('palettes').append($(template));
+  });
 };
 
 $(window).on('load', () => {
