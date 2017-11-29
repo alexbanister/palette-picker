@@ -21,7 +21,6 @@ export const getPalette = (projectId) => {
 };
 
 export const postPalette = (palette, projectId) => {
-  console.log(palette);
   return fetch(`/api/v1/projects/${projectId}/palettes`, {
     method:'post',
     body: JSON.stringify(palette),
