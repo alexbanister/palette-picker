@@ -40,15 +40,7 @@ app.post('/api/v1/projects', (request, response) => {
 });
 app.get('/api/v1/projects/:projectId/palettes', (request, response) => {
   database('palettes').where('project_id', request.params.projectId).select()
-    .then(palettes => {
-      if (palettes.length) {
-        response.status(200).json(palettes);
-      } else {
-        response.status(404).json({
-          error: `Could not find paper with id ${request.params.id}`
-        });
-      }
-    })
+    .then(palettes => response.status(200).json(palettes))
     .catch(error => {
       response.status(500).json({ error });
     });

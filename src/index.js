@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { getProjects, getPalette, postProjects } from './api';
+import { getProjects, getPalette, postProjects, postProjects } from './api';
 
 var lockedPositions = [];
 var currentColors = [];
@@ -53,7 +53,7 @@ const buildProjectsMenu = async () => {
   allProjects.forEach(project => {
     renderProjectInMenu(project);
   });
-  loadPalettes(allProjects[0].id);
+  loadPalettes($('[name="current-project"]').val());
 };
 
 const renderProjectInMenu = (project) => {
@@ -65,10 +65,15 @@ const renderProjectInMenu = (project) => {
 };
 
 const loadPalettes = async (projectId) => {
+  $('.palettes').html('');
   const currentProjectPalette = await getPalette(projectId);
-  currentProjectPalette.forEach( palette => {
-    renderPalette(palette);
-  });
+  if (!currentProjectPalette.length) {
+    $('.palettes').html('<h4>This Project has no palettes</h4>');
+  } else {
+    currentProjectPalette.forEach( palette => {
+      renderPalette(palette);
+    });
+  }
 };
 
 const renderPalette = (palette) => {
@@ -90,12 +95,17 @@ const createProject = async (e) => {
   const name = $('[name="new-project"]').val();
   const { id } = await postProjects(name);
   renderProjectInMenu({ name, id });
+  $('.palettes').html('<h4>This Project has no palettes</h4>');
+  $('[name="new-project"]').val('');
 };
 
-$(window).on('load', () => {
+$(document).ready( () => {
   buildProjectsMenu();
   shuffleColors();
 });
 $('[name="shuffle-colors"]').on('click', shuffleColors);
 $('.lock').on('click', toggleLocked);
 $('[name="create-project"]').on('click', createProject);
+$('[name="current-project"]').on('change', (e) => {
+  loadPalettes(e.target.value);
+});

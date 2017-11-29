@@ -66,6 +66,8 @@ aside {
   aside h3 {
     padding-bottom: .5em;
     text-align: left; }
+  aside h4 {
+    margin: 1em; }
   aside h5 {
     text-align: left; }
   aside label {
