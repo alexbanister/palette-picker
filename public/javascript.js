@@ -136,19 +136,19 @@ const buildProjectsMenu = async () => {
 const loadPalettes = async projectId => {
   const currentProjectPalette = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["a" /* getPalette */])(projectId);
   currentProjectPalette.forEach(palette => {
-    console.log(palette);
-    const template = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palette-template').html();
-    __WEBPACK_IMPORTED_MODULE_0_jquery___default()(template).find('h5').text(palette.name);
-    template.find('.color-swatch').each((i, element) => {
-      __WEBPACK_IMPORTED_MODULE_0_jquery___default()(element).css('background', palette[`color${i + 1}`]);
-    });
-    __WEBPACK_IMPORTED_MODULE_0_jquery___default()(template).removeClass('palette-template').addClass('project-palettes');
-    __WEBPACK_IMPORTED_MODULE_0_jquery___default()('palettes').append(__WEBPACK_IMPORTED_MODULE_0_jquery___default()(template));
+    renderPalette(palette);
+  });
+};
+
+const renderPalette = palette => {
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palette-template').clone(true).removeClass('palette-template').addClass('project-palettes').prependTo('.palettes').data('id', palette.id).data('projectId', palette.projectId).find('h5').text(palette.name).closest('div').find('.color-swatch').each((i, element) => {
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()(element).css('background', palette[`color${i + 1}`]);
   });
 };
 
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()(window).on('load', () => {
   buildProjectsMenu();
+  shuffleColors();
 });
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="shuffle-colors"]').on('click', shuffleColors);
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.lock').on('click', toggleLocked);

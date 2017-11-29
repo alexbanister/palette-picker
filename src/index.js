@@ -62,19 +62,27 @@ const buildProjectsMenu = async () => {
 const loadPalettes = async (projectId) => {
   const currentProjectPalette = await getPalette(projectId);
   currentProjectPalette.forEach( palette => {
-    console.log(palette);
-    const template = $('.palette-template').html();
-    $(template).find('h5').text(palette.name);
-    template.find('.color-swatch').each( (i, element) => {
+    renderPalette(palette);
+  });
+};
+
+const renderPalette = (palette) => {
+  $('.palette-template').clone(true)
+    .removeClass('palette-template')
+    .addClass('project-palettes')
+    .prependTo('.palettes')
+    .data('id', palette.id)
+    .data('projectId', palette.projectId)
+    .find('h5').text(palette.name)
+    .closest('div')
+    .find('.color-swatch').each( (i, element) => {
       $(element).css('background', palette[`color${i+1}`]);
     });
-    $(template).removeClass('palette-template').addClass('project-palettes');
-    $('palettes').append($(template));
-  });
 };
 
 $(window).on('load', () => {
   buildProjectsMenu();
+  shuffleColors();
 });
 $('[name="shuffle-colors"]').on('click', shuffleColors);
 $('.lock').on('click', toggleLocked);

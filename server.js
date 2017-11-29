@@ -1,4 +1,7 @@
 const express = require('express');
+const environment = process.env.NODE_ENV || 'development';
+const configuration = require('./knexfile')[environment];
+const database = require('knex')(configuration);
 const app = express();
 const bodyParser = require('body-parser');
 
@@ -8,62 +11,47 @@ app.use(express.static(__dirname + '/public'));
 app.set('port', process.env.PORT || 3000);
 
 app.locals.title = 'Palette Picker';
-app.locals.projects = [
-  {
-    id: 1,
-    name: 'First Project'
-  }, {
-    id: 2,
-    name: 'Second Project'
-  }, {
-    id: 3,
-    name: 'Third Project'
-  }
-];
-app.locals.palettes = [
-  {
-    id: 1,
-    projectId: 1,
-    name: 'My Palette',
-    color1: '#23edf1',
-    color2: '#f19f23',
-    color3: '#3323f1',
-    color4: '#46f123',
-    color5: '#f12361'
-  }, {
-    id: 2,
-    projectId: 1,
-    name: 'My Other Palette',
-    color1: '#8a23f1',
-    color2: '#daf123',
-    color3: '#7e23f1',
-    color4: '#479037',
-    color5: '#e88ca8'
-  }, {
-    id: 3,
-    projectId: 2,
-    name: 'New Palette',
-    color1: '#c4a5e3',
-    color2: '#dee4ab',
-    color3: '#c2a8e4',
-    color4: '#a7db9c',
-    color5: '#73223a'
-  }
-];
 
 app.get('/api/v1/projects', (request, response) => {
-  response.json(app.locals.projects);
+  database('projects').select()
+    .then((projects) => {
+      response.status(200).json(projects);
+    })
+    .catch((error) => {
+      response.status(500).json({ error });
+    });
 });
 app.post('/api/v1/projects', (request, response) => {
-  const id = app.locals.projects[app.locals.projects.length-1].id+1;
-  const newProject = Object.assign({}, request.body, { id });
-  app.locals.projects = [...app.locals.projects, newProject];
-  response.status(201).json(newProject);
+  const project = request.body;
+
+  if (!project.name){
+    return response
+        .status(422)
+        .send({ error: 'Missing a name property.' });
+  }
+
+  database('projects').insert(project, 'id')
+    .then(project => {
+      response.status(201).json({ id: project[0] });
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
 });
 app.get('/api/v1/projects/:projectId/palettes', (request, response) => {
-  const projectId = parseInt(request.params.projectId);
-  const palettes = app.locals.palettes.filter( palette => palette.projectId === projectId);
-  response.json(palettes);
+  database('palettes').where('project_id', request.params.projectId).select()
+    .then(palettes => {
+      if (palettes.length) {
+        response.status(200).json(palettes);
+      } else {
+        response.status(404).json({
+          error: `Could not find paper with id ${request.params.id}`
+        });
+      }
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
 });
 app.listen(app.get('port'), () => {
   // eslint-disable-next-line no-console
