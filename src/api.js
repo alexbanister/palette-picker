@@ -1,5 +1,8 @@
 export const getProjects = () => {
-  return fetch('/api/v1/projects').then(response => response.json()).then(parsedResponse => parsedResponse).catch(error => error);
+  return fetch('/api/v1/projects')
+  .then(response => response.json())
+  .then(parsedResponse => parsedResponse)
+  .catch(error => error);
 };
 
 export const postProjects = (name) => {
@@ -9,7 +12,8 @@ export const postProjects = (name) => {
     headers: {
       'Content-Type': 'application/json'
     }
-  }).then(response => response.json()).then(parsedResponse => parsedResponse).catch(error => error);
+  })
+  .then(response => response.json()).then(parsedResponse => parsedResponse).catch(error => error);
 };
 export const deleteProjects = (projectId) => {
   return fetch(`/api/v1/projects/${projectId}`, {method: 'delete'}).then(response => response.json()).then(parsedResponse => parsedResponse).catch(error => error);

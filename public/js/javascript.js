@@ -125,7 +125,10 @@ const toggleLocked = e => {
 
 const buildProjectsMenu = async () => {
   const allProjects = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["d" /* getProjects */])();
-  if (allProjects.error) {}
+  if (allProjects.error) {
+    setErrorMessage(allProjects.error);
+    return;
+  }
   allProjects.projects.forEach(project => {
     renderProjectInMenu(project);
   });
@@ -145,6 +148,10 @@ const renderProjectInMenu = project => {
 const loadPalettes = async projectId => {
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palettes').html('');
   const currentProjectPalette = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["c" /* getPalette */])(projectId);
+  if (currentProjectPalette.error) {
+    setErrorMessage(currentProjectPalette.error);
+    return;
+  }
   if (!currentProjectPalette.length) {
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palettes').html('<h4>This Project has no palettes</h4>');
   } else {
@@ -171,8 +178,15 @@ const clearLoading = section => {
 
 const setErrorMessage = error => {
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.error-block').find('p').text(error);
-  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.error-overlay').css('display', 'block');
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.error-overlay').css('display', 'flex');
 };
+
+const clearErrorMessage = () => {
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.error-overlay').css('display', 'none');
+  clearLoading('.save-palette-area');
+  clearLoading('.create-project-area');
+};
+
 const savePalette = async e => {
   e.preventDefault();
   setLoading('.save-palette-area');
@@ -182,7 +196,11 @@ const savePalette = async e => {
   for (let i = 1; i <= 5; i++) {
     palette = Object.assign(palette, { [`color${i}`]: currentColors[i - 1] });
   }
-  const { id, randomPaletteName } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["e" /* postPalette */])(palette, __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val());
+  const { id, randomPaletteName, error } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["e" /* postPalette */])(palette, __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val());
+  if (error) {
+    setErrorMessage(error);
+    return;
+  }
   palette = Object.assign(palette, { id });
   renderPalette(palette);
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="palette-name"]').val(randomPaletteName);
@@ -193,7 +211,11 @@ const createProject = async e => {
   e.preventDefault();
   setLoading('.create-project-area');
   const name = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="new-project"]').val();
-  const { id, randomProjectName } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["f" /* postProjects */])(name);
+  const { id, randomProjectName, error } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["f" /* postProjects */])(name);
+  if (error) {
+    setErrorMessage(error);
+    return;
+  }
   renderProjectInMenu({ name, id });
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palettes').html('<h4>This Project has no palettes</h4>');
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="new-project"]').val(randomProjectName);
@@ -217,7 +239,11 @@ const destroyPalette = async e => {
   const palette = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(e.target).closest('div');
   const paletteId = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(palette).data('paletteId');
   const projectId = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val();
-  await Object(__WEBPACK_IMPORTED_MODULE_1__api__["a" /* deletePalette */])(projectId, paletteId);
+  const { error } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["a" /* deletePalette */])(projectId, paletteId);
+  if (error) {
+    setErrorMessage(error);
+    return;
+  }
   removePalette(palette);
   clearLoading('.create-project-area');
 };
@@ -231,7 +257,11 @@ const removePalette = palette => {
 
 const destroyProject = async () => {
   setLoading('.create-project-area');
-  const { id } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["b" /* deleteProjects */])(__WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val());
+  const { id, error } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["b" /* deleteProjects */])(__WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val());
+  if (error) {
+    setErrorMessage(error);
+    return;
+  }
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').find(`[value="${id}"]`).remove();
   loadPalettes(__WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val());
   clearLoading('.create-project-area');
@@ -251,6 +281,7 @@ __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').on('c
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palette-select, .current-palette, .palette-title').on('click', selectPalette);
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palette-delete').on('click', destroyPalette);
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="delete-project"]').on('click', destroyProject);
+__WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="acknowledge-error"]').on('click', clearErrorMessage);
 
 /***/ }),
 /* 1 */

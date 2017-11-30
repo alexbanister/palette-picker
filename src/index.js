@@ -58,7 +58,8 @@ const toggleLocked = (e) => {
 const buildProjectsMenu = async () => {
   const allProjects = await getProjects();
   if (allProjects.error) {
-
+    setErrorMessage(allProjects.error);
+    return;
   }
   allProjects.projects.forEach(project => {
     renderProjectInMenu(project);
@@ -79,6 +80,10 @@ const renderProjectInMenu = (project) => {
 const loadPalettes = async (projectId) => {
   $('.palettes').html('');
   const currentProjectPalette = await getPalette(projectId);
+  if (currentProjectPalette.error) {
+    setErrorMessage(currentProjectPalette.error);
+    return;
+  }
   if (!currentProjectPalette.length) {
     $('.palettes').html('<h4>This Project has no palettes</h4>');
   } else {
@@ -116,8 +121,15 @@ const clearLoading = (section) => {
 
 const setErrorMessage = (error) => {
   $('.error-block').find('p').text(error);
-  $('.error-overlay').css('display', 'block');
+  $('.error-overlay').css('display', 'flex');
 };
+
+const clearErrorMessage = () => {
+  $('.error-overlay').css('display', 'none');
+  clearLoading('.save-palette-area');
+  clearLoading('.create-project-area');
+};
+
 const savePalette = async (e) => {
   e.preventDefault();
   setLoading('.save-palette-area');
@@ -127,7 +139,11 @@ const savePalette = async (e) => {
   for (let i = 1; i <= 5; i++) {
     palette = Object.assign(palette, { [`color${i}`]: currentColors[i-1] });
   }
-  const { id, randomPaletteName } = await postPalette(palette, $('[name="current-project"]').val());
+  const { id, randomPaletteName, error } = await postPalette(palette, $('[name="current-project"]').val());
+  if (error) {
+    setErrorMessage(error);
+    return;
+  }
   palette = Object.assign(palette, { id });
   renderPalette(palette);
   $('[name="palette-name"]').val(randomPaletteName);
@@ -138,7 +154,11 @@ const createProject = async (e) => {
   e.preventDefault();
   setLoading('.create-project-area');
   const name = $('[name="new-project"]').val();
-  const { id, randomProjectName } = await postProjects(name);
+  const { id, randomProjectName, error } = await postProjects(name);
+  if (error) {
+    setErrorMessage(error);
+    return;
+  }
   renderProjectInMenu({ name, id });
   $('.palettes').html('<h4>This Project has no palettes</h4>');
   $('[name="new-project"]').val(randomProjectName);
@@ -162,7 +182,11 @@ const destroyPalette = async (e) => {
   const palette = $(e.target).closest('div');
   const paletteId = $(palette).data('paletteId');
   const projectId = $('[name="current-project"]').val();
-  await deletePalette(projectId, paletteId);
+  const { error } = await deletePalette(projectId, paletteId);
+  if (error) {
+    setErrorMessage(error);
+    return;
+  }
   removePalette(palette);
   clearLoading('.create-project-area');
 };
@@ -176,7 +200,11 @@ const removePalette = (palette) => {
 
 const destroyProject = async () => {
   setLoading('.create-project-area');
-  const { id } = await deleteProjects($('[name="current-project"]').val());
+  const { id, error } = await deleteProjects($('[name="current-project"]').val());
+  if (error) {
+    setErrorMessage(error);
+    return;
+  }
   $('[name="current-project"]').find(`[value="${id}"]`).remove();
   loadPalettes($('[name="current-project"]').val());
   clearLoading('.create-project-area');
@@ -196,3 +224,4 @@ $('[name="current-project"]').on('change', (e) => {
 $('.palette-select, .current-palette, .palette-title').on('click', selectPalette);
 $('.palette-delete').on('click', destroyPalette);
 $('[name="delete-project"]').on('click', destroyProject);
+$('[name="acknowledge-error"]').on('click', clearErrorMessage);
