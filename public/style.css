@@ -3,9 +3,12 @@
   margin: 0;
   padding: 0; }
 
+html {
+  font-size: 1em; }
+
 body {
   font-family: 'Montserrat', sans-serif;
-  font-size: 1em;
+  font-size: 1rem;
   width: 100vw;
   height: 100vh;
   display: flex; }
@@ -23,66 +26,74 @@ main {
     justify-content: space-between; }
   main section {
     display: flex;
-    align-items: center;
-    padding: 1em; }
+    padding: 1rem; }
   main .color-dot {
     border-radius: 50% 50% 0 50%;
-    margin: 1em;
-    height: 4em;
-    width: 4em; }
+    margin: .5rem;
+    height: 3rem;
+    width: 3rem; }
   main .color-letter {
     background: none;
     text-align: center;
-    font-size: 1.25em; }
+    font-size: 1.25rem; }
   main .color-hex {
-    padding: 1em;
-    padding-left: 2em;
-    width: 30%;
+    padding: 1rem;
+    padding-left: 2rem;
+    width: 15rem;
     display: flex;
     align-items: center;
     justify-content: flex-end;
     color: #ffffff;
-    font-size: 1.5em;
+    font-size: 1.5rem;
     font-weight: bold;
     background: rgba(0, 0, 0, 0.3);
-    border-radius: 125em 0 0 125em; }
+    border-radius: 125rem 0 0 125rem; }
   main .lock {
-    padding-left: 1em; }
+    padding-left: 1rem; }
     main .lock img {
-      width: 1.5em; }
+      width: 1.5rem;
+      transition: all 250ms ease; }
+    main .lock:hover {
+      cursor: pointer; }
+      main .lock:hover img {
+        width: 2rem;
+        margin: 0 -.25rem; }
 
 aside {
-  width: 25em;
-  padding: 1em;
+  width: 30rem;
+  padding: 1rem;
   text-align: center;
   background: #eeeeee;
   overflow-y: scroll; }
   aside h1 {
-    padding: 1em; }
+    padding: 1rem;
+    font-size: 2rem;
+    font-weight: lighter;
+    color: #252525; }
   aside section {
     border-top: 1px solid #252525;
-    padding-top: 1em;
-    margin-top: 1em;
+    padding-top: 1rem;
+    margin-top: 1rem;
     position: relative; }
   aside h3 {
-    padding-bottom: .5em;
+    padding-bottom: .5rem;
     text-align: left; }
   aside h4 {
-    margin: 1em; }
+    margin: 1rem; }
   aside h5 {
     text-align: left; }
   aside label {
     float: left; }
   aside input, aside select {
-    padding: .25em;
-    font-size: 1.25em;
+    padding: .25rem;
+    font-size: 1.25rem;
     width: 100%; }
   aside button {
-    padding: .25em 1em;
-    margin: .5em;
-    font-size: 1.25em;
-    border-radius: 1em;
-    height: 2em;
+    padding: .25em 1rem;
+    margin: .5rem;
+    font-size: 1.25rem;
+    border-radius: 1rem;
+    height: 2rem;
     cursor: pointer;
     transition: all 250ms ease; }
     aside button:hover {
@@ -90,16 +101,19 @@ aside {
   aside button[name="shuffle-colors"] {
     background: #232323;
     color: #eeeeee;
-    width: 100%;
+    width: 90%;
     font-weight: bold;
-    border-radius: 1.5em;
-    height: 3em; }
+    border-radius: 1.5rem;
+    height: 3rem; }
     aside button[name="shuffle-colors"]:hover {
       background: #eeeeee;
       color: #232323; }
+  aside button[name="delete-project"]:hover {
+    background: #eb1616;
+    color: #eeeeee; }
   aside .current-palette {
-    border-radius: 1em;
-    height: 2em;
+    border-radius: 1rem;
+    height: 2rem;
     width: 100%;
     margin: .5em 0;
     display: grid;
@@ -107,28 +121,34 @@ aside {
     overflow: hidden;
     cursor: pointer; }
   aside .color-swatch {
-    height: 2em;
+    height: 2rem;
     width: 100%; }
   aside .project-palettes {
     margin: 1em 0; }
   aside .palette-title {
     cursor: pointer; }
   aside .palette-select, aside .palette-delete {
-    padding: .5em 1em;
+    margin: .25rem;
+    padding: .25em 1rem;
+    border-radius: 1rem;
     cursor: pointer; }
     aside .palette-select:hover, aside .palette-delete:hover {
-      text-decoration: underline; }
+      background: #232323;
+      color: #eeeeee; }
+  aside .palette-delete:hover {
+    background: #eb1616;
+    color: #eeeeee; }
   aside .palette-template {
     display: none; }
 
 .loading {
-  border-radius: 1em;
+  border-radius: 1rem;
   position: absolute;
   background: rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-  top: .5em;
+  top: .5rem;
   bottom: 0;
   left: 0;
   right: 0;
@@ -143,5 +163,32 @@ aside {
   background: #ffffff;
   color: #ffffff;
   transition: background 500ms ease; }
+
+@media (max-width: 850px) {
+  html {
+    font-size: .6em; } }
+@media (max-width: 675px) {
+  html {
+    font-size: .8em; }
+
+  body {
+    flex-direction: column; }
+
+  main {
+    height: auto; }
+
+  .color-letter {
+    display: none; }
+
+  .contrast-block .color-dot {
+    height: 1rem;
+    width: 1rem; }
+
+  .color-hex h3 {
+    padding: 2rem; }
+
+  aside {
+    width: 100vw;
+    overflow-y: auto; } }
 
 /*# sourceMappingURL=style.css.map */
