@@ -60,7 +60,6 @@ app.get('/api/v1/projects/:projectId/palettes', (request, response) => {
 });
 app.post('/api/v1/projects/:projectId/palettes', (request, response) => {
   const palette = Object.assign({}, request.body, { project_id: request.params.projectId });
-  console.log(palette);
   for (let requiredParameter of ['name', 'color1', 'color2', 'color3', 'color4', 'color5']) {
     if (!palette[requiredParameter]) {
       return response
@@ -77,7 +76,16 @@ app.post('/api/v1/projects/:projectId/palettes', (request, response) => {
       response.status(500).json({ error });
     });
 });
-
+app.delete('/api/v1/projects/:projectId/palettes/:palletId', (request, response) => {
+  const id = request.params.palletId;
+  database('palettes').where('id', id).del()
+    .then( () => {
+      response.status(200).json({ id });
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
+});
 app.listen(app.get('port'), () => {
   // eslint-disable-next-line no-console
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);

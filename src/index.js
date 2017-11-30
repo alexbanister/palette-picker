@@ -4,7 +4,8 @@ import {
   getPalette,
   postProjects,
   postPalette,
-  deleteProjects } from './api';
+  deleteProjects,
+  deletePalette } from './api';
 
 var lockedPositions = [];
 var currentColors = [];
@@ -87,7 +88,7 @@ const renderPalette = (palette) => {
     .removeClass('palette-template')
     .addClass('project-palettes')
     .prependTo('.palettes')
-    .data('id', palette.id)
+    .data('paletteId', palette.id)
     .data('projectId', palette.projectId)
     .find('h5').text(palette.name)
     .closest('div')
@@ -118,10 +119,22 @@ const savePalette = async (e) => {
   renderPalette(palette);
 };
 
-const deleteCurrentProject = async () => {
+const destroyProject = async () => {
   const { id } = await deleteProjects($('[name="current-project"]').val());
   $('[name="current-project"]').find(`[value="${id}"]`).remove();
   loadPalettes($('[name="current-project"]').val());
+};
+
+const destroyPalette = async (palette, paletteId, projectId) => {
+  await deletePalette(projectId, paletteId);
+  removePalette(palette);
+};
+
+const removePalette = (palette) => {
+  $(palette).remove();
+  if (!$('.palettes').find('div').length) {
+    $('.palettes').html('<h4>This Project has no palettes</h4>');
+  }
 };
 
 $(document).ready( () => {
@@ -135,4 +148,10 @@ $('[name="create-project"]').on('click', createProject);
 $('[name="current-project"]').on('change', (e) => {
   loadPalettes(e.target.value);
 });
-$('[name="delete-project"]').on('click', deleteCurrentProject);
+$('.palette-delete').on('click', (e) => {
+  const palette = $(e.target).closest('div');
+  const paletteId = $(palette).data('paletteId');
+  const projectId = $('[name="current-project"]').val();
+  destroyPalette(palette, paletteId, projectId);
+});
+$('[name="delete-project"]').on('click', destroyProject);

@@ -34,3 +34,9 @@ export const postPalette = (palette, projectId) => {
     .then(response => response.json())
     .then(parsedResponse => parsedResponse);
 };
+
+export const deletePalette = (projectId, paletteId) => {
+  return fetch(`/api/v1/projects/${projectId}/palettes/${paletteId}`, { method:'delete' })
+    .then(response => response.json())
+    .then(parsedResponse => parsedResponse);
+};
