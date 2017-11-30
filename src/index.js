@@ -88,9 +88,11 @@ const loadPalettes = async (projectId) => {
 const renderPalette = (palette) => {
   $('.palettes').find('h4').remove();
   $('.palette-template').clone(true)
+    .prependTo('.palettes')
     .removeClass('palette-template')
     .addClass('project-palettes')
-    .prependTo('.palettes')
+    .css('display', 'none')
+    .slideDown('slow')
     .data('paletteId', palette.id)
     .data('projectId', palette.projectId)
     .find('h5').text(palette.name)
@@ -144,7 +146,7 @@ const destroyPalette = async (e) => {
 };
 
 const removePalette = (palette) => {
-  $(palette).remove();
+  $(palette).slideUp('slow', () => $(palette).remove());
   if (!$('.palettes').find('div').length) {
     $('.palettes').html('<h4>This Project has no palettes</h4>');
   }

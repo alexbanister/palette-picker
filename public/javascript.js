@@ -155,7 +155,7 @@ const loadPalettes = async projectId => {
 
 const renderPalette = palette => {
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palettes').find('h4').remove();
-  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palette-template').clone(true).removeClass('palette-template').addClass('project-palettes').prependTo('.palettes').data('paletteId', palette.id).data('projectId', palette.projectId).find('h5').text(palette.name).closest('div').find('.color-swatch').each((i, element) => {
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palette-template').clone(true).prependTo('.palettes').removeClass('palette-template').addClass('project-palettes').css('display', 'none').slideDown('slow').data('paletteId', palette.id).data('projectId', palette.projectId).find('h5').text(palette.name).closest('div').find('.color-swatch').each((i, element) => {
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()(element).css('background', palette[`color${i + 1}`]).data('color', palette[`color${i + 1}`]);
   });
 };
@@ -203,7 +203,7 @@ const destroyPalette = async e => {
 };
 
 const removePalette = palette => {
-  __WEBPACK_IMPORTED_MODULE_0_jquery___default()(palette).remove();
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()(palette).slideUp('slow', () => __WEBPACK_IMPORTED_MODULE_0_jquery___default()(palette).remove());
   if (!__WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palettes').find('div').length) {
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palettes').html('<h4>This Project has no palettes</h4>');
   }
