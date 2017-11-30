@@ -105,6 +105,7 @@ const shuffleColors = () => {
       color = generateColor();
     }
     if (!locked) {
+      currentColors[i - 1] = color;
       setOneColor(color, i);
     }
   }
@@ -164,8 +165,8 @@ const savePalette = async e => {
   let palette = {
     name: __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="palette-name"]').val()
   };
-  for (var i = 1; i <= 5; i++) {
-    palette = Object.assign(palette, { [`color${i}`]: __WEBPACK_IMPORTED_MODULE_0_jquery___default()(`[data-id="${i}"]`).find('h3').text() });
+  for (let i = 1; i <= 5; i++) {
+    palette = Object.assign(palette, { [`color${i}`]: currentColors[i - 1] });
   }
   const { id, randomPaletteName } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["e" /* postPalette */])(palette, __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val());
   palette = Object.assign(palette, { id });
@@ -225,7 +226,7 @@ __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="create-project"]').on('cl
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').on('change', e => {
   loadPalettes(e.target.value);
 });
-__WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palette-select, .current-palette').on('click', selectPalette);
+__WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palette-select, .current-palette, .palette-title').on('click', selectPalette);
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palette-delete').on('click', destroyPalette);
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="delete-project"]').on('click', destroyProject);
 

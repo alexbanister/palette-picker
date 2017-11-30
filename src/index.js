@@ -37,6 +37,7 @@ const shuffleColors = () => {
       color = generateColor();
     }
     if (!locked) {
+      currentColors[i-1] = color;
       setOneColor(color, i);
     }
   }
@@ -105,8 +106,8 @@ const savePalette = async (e) => {
   let palette = {
     name: $('[name="palette-name"]').val()
   };
-  for (var i = 1; i <= 5; i++) {
-    palette = Object.assign(palette, { [`color${i}`]: $(`[data-id="${i}"]`).find('h3').text() });
+  for (let i = 1; i <= 5; i++) {
+    palette = Object.assign(palette, { [`color${i}`]: currentColors[i-1] });
   }
   const { id, randomPaletteName } = await postPalette(palette, $('[name="current-project"]').val());
   palette = Object.assign(palette, { id });
@@ -166,6 +167,6 @@ $('[name="create-project"]').on('click', createProject);
 $('[name="current-project"]').on('change', (e) => {
   loadPalettes(e.target.value);
 });
-$('.palette-select, .current-palette').on('click', selectPalette);
+$('.palette-select, .current-palette, .palette-title').on('click', selectPalette);
 $('.palette-delete').on('click', destroyPalette);
 $('[name="delete-project"]').on('click', destroyProject);
