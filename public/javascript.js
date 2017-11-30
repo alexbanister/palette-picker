@@ -160,8 +160,16 @@ const renderPalette = palette => {
   });
 };
 
+const setLoading = section => {
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()(section).css('display', 'block');
+};
+
+const clearLoading = section => {
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()(section).css('display', 'none');
+};
 const savePalette = async e => {
   e.preventDefault();
+  setLoading('.save-palette-area');
   let palette = {
     name: __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="palette-name"]').val()
   };
@@ -172,15 +180,18 @@ const savePalette = async e => {
   palette = Object.assign(palette, { id });
   renderPalette(palette);
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="palette-name"]').val(randomPaletteName);
+  clearLoading('.save-palette-area');
 };
 
 const createProject = async e => {
   e.preventDefault();
+  setLoading('.create-project-area');
   const name = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="new-project"]').val();
   const { id, randomProjectName } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["f" /* postProjects */])(name);
   renderProjectInMenu({ name, id });
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palettes').html('<h4>This Project has no palettes</h4>');
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="new-project"]').val(randomProjectName);
+  clearLoading('.create-project-area');
 };
 
 const selectPalette = e => {
@@ -195,11 +206,13 @@ const selectPalette = e => {
 };
 
 const destroyPalette = async e => {
+  setLoading('.create-project-area');
   const palette = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(e.target).closest('div');
   const paletteId = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(palette).data('paletteId');
   const projectId = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val();
   await Object(__WEBPACK_IMPORTED_MODULE_1__api__["a" /* deletePalette */])(projectId, paletteId);
   removePalette(palette);
+  clearLoading('.create-project-area');
 };
 
 const removePalette = palette => {
@@ -210,9 +223,11 @@ const removePalette = palette => {
 };
 
 const destroyProject = async () => {
+  setLoading('.create-project-area');
   const { id } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["b" /* deleteProjects */])(__WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val());
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').find(`[value="${id}"]`).remove();
   loadPalettes(__WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val());
+  clearLoading('.create-project-area');
 };
 
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()(document).ready(() => {

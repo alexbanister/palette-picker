@@ -103,8 +103,16 @@ const renderPalette = (palette) => {
     });
 };
 
+const setLoading = (section) => {
+  $(section).css('display', 'block');
+};
+
+const clearLoading = (section) => {
+  $(section).css('display', 'none');
+};
 const savePalette = async (e) => {
   e.preventDefault();
+  setLoading('.save-palette-area');
   let palette = {
     name: $('[name="palette-name"]').val()
   };
@@ -115,15 +123,18 @@ const savePalette = async (e) => {
   palette = Object.assign(palette, { id });
   renderPalette(palette);
   $('[name="palette-name"]').val(randomPaletteName);
+  clearLoading('.save-palette-area');
 };
 
 const createProject = async (e) => {
   e.preventDefault();
+  setLoading('.create-project-area');
   const name = $('[name="new-project"]').val();
   const { id, randomProjectName } = await postProjects(name);
   renderProjectInMenu({ name, id });
   $('.palettes').html('<h4>This Project has no palettes</h4>');
   $('[name="new-project"]').val(randomProjectName);
+  clearLoading('.create-project-area');
 };
 
 const selectPalette = (e) => {
@@ -138,11 +149,13 @@ const selectPalette = (e) => {
 };
 
 const destroyPalette = async (e) => {
+  setLoading('.create-project-area');
   const palette = $(e.target).closest('div');
   const paletteId = $(palette).data('paletteId');
   const projectId = $('[name="current-project"]').val();
   await deletePalette(projectId, paletteId);
   removePalette(palette);
+  clearLoading('.create-project-area');
 };
 
 const removePalette = (palette) => {
@@ -153,9 +166,11 @@ const removePalette = (palette) => {
 };
 
 const destroyProject = async () => {
+  setLoading('.create-project-area');
   const { id } = await deleteProjects($('[name="current-project"]').val());
   $('[name="current-project"]').find(`[value="${id}"]`).remove();
   loadPalettes($('[name="current-project"]').val());
+  clearLoading('.create-project-area');
 };
 
 $(document).ready( () => {

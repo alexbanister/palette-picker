@@ -80,6 +80,7 @@ aside {
     border-top: 1px solid #252525;
     padding-top: 1em;
     margin-top: 1em;
+    position: relative;
   }
   h3 {
     padding-bottom: .5em;
@@ -153,6 +154,25 @@ aside {
   .palette-template {
     display: none;
   }
+}
+.loading {
+  border-radius: 1em;
+  position: absolute;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: .5em;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transition: all 250ms ease;
+  img {
+    width: 50%;
+  }
+}
+.create-project-area, .save-palette-area {
+  display: none;
 }
 
 .color1, .color2, .color3, .color4, .color5 {
