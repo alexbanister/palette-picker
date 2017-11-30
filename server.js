@@ -4,6 +4,8 @@ const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
 const app = express();
 const bodyParser = require('body-parser');
+const nouns = require('./nouns.js')
+const adjectives = require('./adjectives.js')
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -12,10 +14,25 @@ app.set('port', process.env.PORT || 3000);
 
 app.locals.title = 'Palette Picker';
 
+const generateRandomName = () => {
+  const noun = nouns[Math.floor(Math.random() * nouns.length)];
+  const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+  return `${adjective} ${noun}`;
+}
+
 app.get('/api/v1/projects', (request, response) => {
+  console.log(adjectives.length);
   database('projects').select()
     .then((projects) => {
-      response.status(200).json(projects);
+      const sendBack = Object.assign(
+        {},
+        { projects },
+        {
+          randomProjectName: generateRandomName(),
+          randomPaletteName: generateRandomName()
+        }
+      );
+      response.status(200).json(sendBack);
     })
     .catch((error) => {
       response.status(500).json({ error });
@@ -32,7 +49,7 @@ app.post('/api/v1/projects', (request, response) => {
 
   database('projects').insert(project, 'id')
     .then(project => {
-      response.status(201).json({ id: project[0] });
+      response.status(201).json({ id: project[0], randomProjectName: generateRandomName() });
     })
     .catch(error => {
       response.status(500).json({ error });
@@ -70,7 +87,7 @@ app.post('/api/v1/projects/:projectId/palettes', (request, response) => {
 
   database('palettes').insert(palette, 'id')
     .then(palette => {
-      response.status(201).json({ id: palette[0] });
+      response.status(201).json({ id: palette[0], randomPaletteName: generateRandomName() });
     })
     .catch(error => {
       response.status(500).json({ error });

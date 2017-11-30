@@ -124,10 +124,12 @@ const toggleLocked = e => {
 
 const buildProjectsMenu = async () => {
   const allProjects = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["d" /* getProjects */])();
-  allProjects.forEach(project => {
+  allProjects.projects.forEach(project => {
     renderProjectInMenu(project);
   });
   loadPalettes(__WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val());
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="palette-name"]').val(allProjects.randomProjectName);
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="new-project"]').val(allProjects.randomPaletteName);
 };
 
 const renderProjectInMenu = project => {
@@ -165,19 +167,19 @@ const savePalette = async e => {
   for (var i = 1; i <= 5; i++) {
     palette = Object.assign(palette, { [`color${i}`]: __WEBPACK_IMPORTED_MODULE_0_jquery___default()(`[data-id="${i}"]`).find('h3').text() });
   }
-  const id = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["e" /* postPalette */])(palette, __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val());
+  const { id, randomPaletteName } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["e" /* postPalette */])(palette, __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val());
   palette = Object.assign(palette, { id });
   renderPalette(palette);
-  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="palette-name"]').val('');
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="palette-name"]').val(randomPaletteName);
 };
 
 const createProject = async e => {
   e.preventDefault();
   const name = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="new-project"]').val();
-  const { id } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["f" /* postProjects */])(name);
+  const { id, randomProjectName } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["f" /* postProjects */])(name);
   renderProjectInMenu({ name, id });
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palettes').html('<h4>This Project has no palettes</h4>');
-  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="new-project"]').val('');
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="new-project"]').val(randomProjectName);
 };
 
 const selectPalette = e => {

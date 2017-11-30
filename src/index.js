@@ -56,10 +56,12 @@ const toggleLocked = (e) => {
 
 const buildProjectsMenu = async () => {
   const allProjects = await getProjects();
-  allProjects.forEach(project => {
+  allProjects.projects.forEach(project => {
     renderProjectInMenu(project);
   });
   loadPalettes($('[name="current-project"]').val());
+  $('[name="palette-name"]').val(allProjects.randomProjectName);
+  $('[name="new-project"]').val(allProjects.randomPaletteName);
 };
 
 const renderProjectInMenu = (project) => {
@@ -106,19 +108,19 @@ const savePalette = async (e) => {
   for (var i = 1; i <= 5; i++) {
     palette = Object.assign(palette, { [`color${i}`]: $(`[data-id="${i}"]`).find('h3').text() });
   }
-  const id = await postPalette(palette, $('[name="current-project"]').val());
+  const { id, randomPaletteName } = await postPalette(palette, $('[name="current-project"]').val());
   palette = Object.assign(palette, { id });
   renderPalette(palette);
-  $('[name="palette-name"]').val('');
+  $('[name="palette-name"]').val(randomPaletteName);
 };
 
 const createProject = async (e) => {
   e.preventDefault();
   const name = $('[name="new-project"]').val();
-  const { id } = await postProjects(name);
+  const { id, randomProjectName } = await postProjects(name);
   renderProjectInMenu({ name, id });
   $('.palettes').html('<h4>This Project has no palettes</h4>');
-  $('[name="new-project"]').val('');
+  $('[name="new-project"]').val(randomProjectName);
 };
 
 const selectPalette = (e) => {
