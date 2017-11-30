@@ -13,6 +13,11 @@ export const postProjects = (name) => {
     .then(response => response.json())
     .then(parsedResponse => parsedResponse);
 };
+export const deleteProjects = (projectId) => {
+  return fetch(`/api/v1/projects/${projectId}`, { method:'delete' })
+    .then(response => response.json())
+    .then(parsedResponse => parsedResponse);
+};
 
 export const getPalette = (projectId) => {
   return fetch(`/api/v1/projects/${projectId}/palettes`)
@@ -26,6 +31,12 @@ export const postPalette = (palette, projectId) => {
     body: JSON.stringify(palette),
     headers: {'Content-Type': 'application/json'}
   })
+    .then(response => response.json())
+    .then(parsedResponse => parsedResponse);
+};
+
+export const deletePalette = (projectId, paletteId) => {
+  return fetch(`/api/v1/projects/${projectId}/palettes/${paletteId}`, { method:'delete' })
     .then(response => response.json())
     .then(parsedResponse => parsedResponse);
 };

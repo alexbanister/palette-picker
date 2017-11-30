@@ -1,5 +1,11 @@
 import $ from 'jquery';
-import { getProjects, getPalette, postProjects, postPalette } from './api';
+import {
+  getProjects,
+  getPalette,
+  postProjects,
+  postPalette,
+  deleteProjects,
+  deletePalette } from './api';
 
 var lockedPositions = [];
 var currentColors = [];
@@ -24,14 +30,14 @@ const setOneColor = (color, position) => {
 };
 
 const shuffleColors = () => {
-  for (var i = 0; i < 5; i++) {
-    const locked = lockedPositions.find( pos => pos === i+1);
+  for (var i = 1; i <= 5; i++) {
+    const locked = lockedPositions.find( pos => pos === i);
     let color = generateColor();
     while (currentColors.includes(color)) {
       color = generateColor();
     }
     if (!locked) {
-      setOneColor(color, i+1);
+      setOneColor(color, i);
     }
   }
 };
@@ -50,10 +56,12 @@ const toggleLocked = (e) => {
 
 const buildProjectsMenu = async () => {
   const allProjects = await getProjects();
-  allProjects.forEach(project => {
+  allProjects.projects.forEach(project => {
     renderProjectInMenu(project);
   });
   loadPalettes($('[name="current-project"]').val());
+  $('[name="palette-name"]').val(allProjects.randomProjectName);
+  $('[name="new-project"]').val(allProjects.randomPaletteName);
 };
 
 const renderProjectInMenu = (project) => {
@@ -82,22 +90,14 @@ const renderPalette = (palette) => {
     .removeClass('palette-template')
     .addClass('project-palettes')
     .prependTo('.palettes')
-    .data('id', palette.id)
+    .data('paletteId', palette.id)
     .data('projectId', palette.projectId)
     .find('h5').text(palette.name)
     .closest('div')
     .find('.color-swatch').each( (i, element) => {
-      $(element).css('background', palette[`color${i+1}`]);
+      $(element).css('background', palette[`color${i+1}`])
+      .data('color', palette[`color${i+1}`]);
     });
-};
-
-const createProject = async (e) => {
-  e.preventDefault();
-  const name = $('[name="new-project"]').val();
-  const { id } = await postProjects(name);
-  renderProjectInMenu({ name, id });
-  $('.palettes').html('<h4>This Project has no palettes</h4>');
-  $('[name="new-project"]').val('');
 };
 
 const savePalette = async (e) => {
@@ -108,9 +108,51 @@ const savePalette = async (e) => {
   for (var i = 1; i <= 5; i++) {
     palette = Object.assign(palette, { [`color${i}`]: $(`[data-id="${i}"]`).find('h3').text() });
   }
-  const id = await postPalette(palette, $('[name="current-project"]').val());
+  const { id, randomPaletteName } = await postPalette(palette, $('[name="current-project"]').val());
   palette = Object.assign(palette, { id });
   renderPalette(palette);
+  $('[name="palette-name"]').val(randomPaletteName);
+};
+
+const createProject = async (e) => {
+  e.preventDefault();
+  const name = $('[name="new-project"]').val();
+  const { id, randomProjectName } = await postProjects(name);
+  renderProjectInMenu({ name, id });
+  $('.palettes').html('<h4>This Project has no palettes</h4>');
+  $('[name="new-project"]').val(randomProjectName);
+};
+
+const selectPalette = (e) => {
+  const palette = $(e.target).closest('div').find('.color-swatch');
+  let colors = [];
+  $(palette).each( (i, color) => {
+    colors = [...colors, $(color).data('color')];
+  });
+  colors.forEach( (color, i) => {
+    setOneColor(color, i+1);
+  });
+};
+
+const destroyPalette = async (e) => {
+  const palette = $(e.target).closest('div');
+  const paletteId = $(palette).data('paletteId');
+  const projectId = $('[name="current-project"]').val();
+  await deletePalette(projectId, paletteId);
+  removePalette(palette);
+};
+
+const removePalette = (palette) => {
+  $(palette).remove();
+  if (!$('.palettes').find('div').length) {
+    $('.palettes').html('<h4>This Project has no palettes</h4>');
+  }
+};
+
+const destroyProject = async () => {
+  const { id } = await deleteProjects($('[name="current-project"]').val());
+  $('[name="current-project"]').find(`[value="${id}"]`).remove();
+  loadPalettes($('[name="current-project"]').val());
 };
 
 $(document).ready( () => {
@@ -124,3 +166,6 @@ $('[name="create-project"]').on('click', createProject);
 $('[name="current-project"]').on('change', (e) => {
   loadPalettes(e.target.value);
 });
+$('.palette-select, .current-palette').on('click', selectPalette);
+$('.palette-delete').on('click', destroyPalette);
+$('[name="delete-project"]').on('click', destroyProject);

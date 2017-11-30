@@ -4,6 +4,8 @@ const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
 const app = express();
 const bodyParser = require('body-parser');
+const nouns = require('./nouns.js')
+const adjectives = require('./adjectives.js')
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -12,10 +14,25 @@ app.set('port', process.env.PORT || 3000);
 
 app.locals.title = 'Palette Picker';
 
+const generateRandomName = () => {
+  const noun = nouns[Math.floor(Math.random() * nouns.length)];
+  const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+  return `${adjective} ${noun}`;
+}
+
 app.get('/api/v1/projects', (request, response) => {
+  console.log(adjectives.length);
   database('projects').select()
     .then((projects) => {
-      response.status(200).json(projects);
+      const sendBack = Object.assign(
+        {},
+        { projects },
+        {
+          randomProjectName: generateRandomName(),
+          randomPaletteName: generateRandomName()
+        }
+      );
+      response.status(200).json(sendBack);
     })
     .catch((error) => {
       response.status(500).json({ error });
@@ -32,7 +49,20 @@ app.post('/api/v1/projects', (request, response) => {
 
   database('projects').insert(project, 'id')
     .then(project => {
-      response.status(201).json({ id: project[0] });
+      response.status(201).json({ id: project[0], randomProjectName: generateRandomName() });
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
+});
+app.delete('/api/v1/projects/:projectId', (request, response) => {
+  const id = request.params.projectId;
+  database('palettes').where('project_id', id).del()
+    .then( () => {
+      return database('projects').where('id', id).del();
+    })
+    .then( () => {
+      response.status(200).json({ id });
     })
     .catch(error => {
       response.status(500).json({ error });
@@ -47,7 +77,6 @@ app.get('/api/v1/projects/:projectId/palettes', (request, response) => {
 });
 app.post('/api/v1/projects/:projectId/palettes', (request, response) => {
   const palette = Object.assign({}, request.body, { project_id: request.params.projectId });
-  console.log(palette);
   for (let requiredParameter of ['name', 'color1', 'color2', 'color3', 'color4', 'color5']) {
     if (!palette[requiredParameter]) {
       return response
@@ -58,13 +87,22 @@ app.post('/api/v1/projects/:projectId/palettes', (request, response) => {
 
   database('palettes').insert(palette, 'id')
     .then(palette => {
-      response.status(201).json({ id: palette[0] });
+      response.status(201).json({ id: palette[0], randomPaletteName: generateRandomName() });
     })
     .catch(error => {
       response.status(500).json({ error });
     });
 });
-
+app.delete('/api/v1/projects/:projectId/palettes/:palletId', (request, response) => {
+  const id = request.params.palletId;
+  database('palettes').where('id', id).del()
+    .then( () => {
+      response.status(200).json({ id });
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
+});
 app.listen(app.get('port'), () => {
   // eslint-disable-next-line no-console
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
