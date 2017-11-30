@@ -62,7 +62,8 @@ aside {
   aside section {
     border-top: 1px solid #252525;
     padding-top: 1em;
-    margin-top: 1em; }
+    margin-top: 1em;
+    position: relative; }
   aside h3 {
     padding-bottom: .5em;
     text-align: left; }
@@ -81,7 +82,21 @@ aside {
     margin: .5em;
     font-size: 1.25em;
     border-radius: 1em;
-    height: 2em; }
+    height: 2em;
+    cursor: pointer;
+    transition: all 250ms ease; }
+    aside button:hover {
+      background: #aaaaaa; }
+  aside button[name="shuffle-colors"] {
+    background: #232323;
+    color: #eeeeee;
+    width: 100%;
+    font-weight: bold;
+    border-radius: 1.5em;
+    height: 3em; }
+    aside button[name="shuffle-colors"]:hover {
+      background: #eeeeee;
+      color: #232323; }
   aside .current-palette {
     border-radius: 1em;
     height: 2em;
@@ -89,35 +104,44 @@ aside {
     margin: .5em 0;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    overflow: hidden; }
+    overflow: hidden;
+    cursor: pointer; }
   aside .color-swatch {
     height: 2em;
     width: 100%; }
   aside .project-palettes {
     margin: 1em 0; }
+  aside .palette-title {
+    cursor: pointer; }
   aside .palette-select, aside .palette-delete {
-    padding: .5em 1em; }
+    padding: .5em 1em;
+    cursor: pointer; }
+    aside .palette-select:hover, aside .palette-delete:hover {
+      text-decoration: underline; }
   aside .palette-template {
     display: none; }
 
-.color1 {
-  background: #54457F;
-  color: #54457F; }
+.loading {
+  border-radius: 1em;
+  position: absolute;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: .5em;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transition: all 250ms ease; }
+  .loading img {
+    width: 50%; }
 
-.color2 {
-  background: #AC7B84;
-  color: #AC7B84; }
+.create-project-area, .save-palette-area {
+  display: none; }
 
-.color3 {
-  background: #4C243B;
-  color: #4C243B; }
-
-.color4 {
-  background: #B84A62;
-  color: #B84A62; }
-
-.color5 {
-  background: #F5A6E6;
-  color: #F5A6E6; }
+.color1, .color2, .color3, .color4, .color5 {
+  background: #ffffff;
+  color: #ffffff;
+  transition: background 500ms ease; }
 
 /*# sourceMappingURL=style.css.map */
