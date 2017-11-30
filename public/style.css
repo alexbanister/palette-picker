@@ -23,13 +23,12 @@ main {
     justify-content: space-between; }
   main section {
     display: flex;
-    align-items: center;
     padding: 1em; }
   main .color-dot {
     border-radius: 50% 50% 0 50%;
-    margin: 1em;
-    height: 4em;
-    width: 4em; }
+    margin: .5em;
+    height: 3em;
+    width: 3em; }
   main .color-letter {
     background: none;
     text-align: center;
@@ -49,7 +48,13 @@ main {
   main .lock {
     padding-left: 1em; }
     main .lock img {
-      width: 1.5em; }
+      width: 1.5em;
+      transition: all 250ms ease; }
+    main .lock:hover {
+      cursor: pointer; }
+      main .lock:hover img {
+        width: 2em;
+        margin: 0 -.25em; }
 
 aside {
   width: 25em;
@@ -97,6 +102,9 @@ aside {
     aside button[name="shuffle-colors"]:hover {
       background: #eeeeee;
       color: #232323; }
+  aside button[name="delete-project"]:hover {
+    background: #eb1616;
+    color: #eeeeee; }
   aside .current-palette {
     border-radius: 1em;
     height: 2em;
@@ -114,10 +122,16 @@ aside {
   aside .palette-title {
     cursor: pointer; }
   aside .palette-select, aside .palette-delete {
-    padding: .5em 1em;
+    margin: .25em;
+    padding: .25em 1em;
+    border-radius: 1em;
     cursor: pointer; }
     aside .palette-select:hover, aside .palette-delete:hover {
-      text-decoration: underline; }
+      background: #232323;
+      color: #eeeeee; }
+  aside .palette-delete:hover {
+    background: #eb1616;
+    color: #eeeeee; }
   aside .palette-template {
     display: none; }
 

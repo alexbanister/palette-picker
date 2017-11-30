@@ -28,15 +28,14 @@ main {
 
   section {
     display: flex;
-    align-items: center;
     padding: 1em;
   }
 
   .color-dot {
     border-radius: 50% 50% 0 50%;
-    margin: 1em;
-    height: 4em;
-    width: 4em;
+    margin: .5em;
+    height: 3em;
+    width: 3em;
   }
 
   .color-letter {
@@ -63,6 +62,14 @@ main {
     padding-left: 1em;
     img {
       width: 1.5em;
+      transition: all 250ms ease;
+    }
+    &:hover {
+      cursor: pointer;
+      img {
+        width: 2em;
+        margin: 0 -.25em;
+      }
     }
   }
 }
@@ -124,6 +131,10 @@ aside {
       color: #232323;
     }
   }
+  button[name="delete-project"]:hover {
+    background: #eb1616;
+    color: #eeeeee;
+  }
   .current-palette {
     border-radius: 1em;
     height: 2em;
@@ -145,11 +156,18 @@ aside {
     cursor: pointer;
   }
   .palette-select, .palette-delete {
-    padding: .5em 1em;
+    margin: .25em;
+    padding: .25em 1em;
+    border-radius: 1em;
     cursor: pointer;
     &:hover {
-      text-decoration: underline;
+      background: #232323;
+      color: #eeeeee;
     }
+  }
+  .palette-delete:hover {
+    background: #eb1616;
+    color: #eeeeee;
   }
   .palette-template {
     display: none;
@@ -174,6 +192,7 @@ aside {
 .create-project-area, .save-palette-area {
   display: none;
 }
+
 
 .color1, .color2, .color3, .color4, .color5 {
   background: #ffffff;
