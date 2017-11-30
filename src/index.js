@@ -48,7 +48,7 @@ const toggleLocked = (e) => {
   const locked = lockedPositions.find( pos => pos === position);
   if (locked) {
     lockedPositions = lockedPositions.filter( pos => pos !== position);
-    $('[data-id='+position+']').find('img').attr('src', 'images/keep.svg');
+    $('[data-id='+position+']').find('img').attr('src', 'images/unlocked.svg');
   } else {
     lockedPositions = [...lockedPositions, position];
     $('[data-id='+position+']').find('img').attr('src', 'images/locked.svg');
@@ -57,6 +57,9 @@ const toggleLocked = (e) => {
 
 const buildProjectsMenu = async () => {
   const allProjects = await getProjects();
+  if (allProjects.error) {
+
+  }
   allProjects.projects.forEach(project => {
     renderProjectInMenu(project);
   });
@@ -109,6 +112,11 @@ const setLoading = (section) => {
 
 const clearLoading = (section) => {
   $(section).css('display', 'none');
+};
+
+const setErrorMessage = (error) => {
+  $('.error-block').find('p').text(error);
+  $('.error-overlay').css('display', 'block');
 };
 const savePalette = async (e) => {
   e.preventDefault();

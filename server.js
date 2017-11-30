@@ -4,8 +4,7 @@ const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
 const app = express();
 const bodyParser = require('body-parser');
-const nouns = require('./nouns.js')
-const adjectives = require('./adjectives.js')
+const generateRandomName = require('random-name-generator');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -13,12 +12,6 @@ app.use(express.static(__dirname + '/public'));
 app.set('port', process.env.PORT || 3000);
 
 app.locals.title = 'Palette Picker';
-
-const generateRandomName = () => {
-  const noun = nouns[Math.floor(Math.random() * nouns.length)];
-  const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
-  return `${adjective} ${noun}`;
-};
 
 app.get('/api/v1/projects', (request, response) => {
   database('projects').select()
@@ -61,7 +54,7 @@ app.delete('/api/v1/projects/:projectId', (request, response) => {
       return database('projects').where('id', id).del();
     })
     .then( () => {
-      response.status(200).json({ id });
+      response.status(204).json({ id });
     })
     .catch(error => {
       response.status(500).json({ error });
@@ -96,7 +89,7 @@ app.delete('/api/v1/projects/:projectId/palettes/:palletId', (request, response)
   const id = request.params.palletId;
   database('palettes').where('id', id).del()
     .then( () => {
-      response.status(200).json({ id });
+      response.status(204).json({ id });
     })
     .catch(error => {
       response.status(500).json({ error });

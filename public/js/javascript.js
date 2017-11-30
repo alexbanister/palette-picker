@@ -116,7 +116,7 @@ const toggleLocked = e => {
   const locked = lockedPositions.find(pos => pos === position);
   if (locked) {
     lockedPositions = lockedPositions.filter(pos => pos !== position);
-    __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-id=' + position + ']').find('img').attr('src', 'images/keep.svg');
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-id=' + position + ']').find('img').attr('src', 'images/unlocked.svg');
   } else {
     lockedPositions = [...lockedPositions, position];
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-id=' + position + ']').find('img').attr('src', 'images/locked.svg');
@@ -125,6 +125,7 @@ const toggleLocked = e => {
 
 const buildProjectsMenu = async () => {
   const allProjects = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["d" /* getProjects */])();
+  if (allProjects.error) {}
   allProjects.projects.forEach(project => {
     renderProjectInMenu(project);
   });
@@ -166,6 +167,11 @@ const setLoading = section => {
 
 const clearLoading = section => {
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()(section).css('display', 'none');
+};
+
+const setErrorMessage = error => {
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.error-block').find('p').text(error);
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.error-overlay').css('display', 'block');
 };
 const savePalette = async e => {
   e.preventDefault();
@@ -10512,7 +10518,7 @@ return jQuery;
 
 "use strict";
 const getProjects = () => {
-  return fetch('/api/v1/projects').then(response => response.json()).then(parsedResponse => parsedResponse);
+  return fetch('/api/v1/projects').then(response => response.json()).then(parsedResponse => parsedResponse).catch(error => error);
 };
 /* harmony export (immutable) */ __webpack_exports__["d"] = getProjects;
 
@@ -10521,19 +10527,21 @@ const postProjects = name => {
   return fetch('/api/v1/projects', {
     method: 'post',
     body: JSON.stringify({ name }),
-    headers: { 'Content-Type': 'application/json' }
-  }).then(response => response.json()).then(parsedResponse => parsedResponse);
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then(response => response.json()).then(parsedResponse => parsedResponse).catch(error => error);
 };
 /* harmony export (immutable) */ __webpack_exports__["f"] = postProjects;
 
 const deleteProjects = projectId => {
-  return fetch(`/api/v1/projects/${projectId}`, { method: 'delete' }).then(response => response.json()).then(parsedResponse => parsedResponse);
+  return fetch(`/api/v1/projects/${projectId}`, { method: 'delete' }).then(response => response.json()).then(parsedResponse => parsedResponse).catch(error => error);
 };
 /* harmony export (immutable) */ __webpack_exports__["b"] = deleteProjects;
 
 
 const getPalette = projectId => {
-  return fetch(`/api/v1/projects/${projectId}/palettes`).then(response => response.json()).then(parsedResponse => parsedResponse);
+  return fetch(`/api/v1/projects/${projectId}/palettes`).then(response => response.json()).then(parsedResponse => parsedResponse).catch(error => error);
 };
 /* harmony export (immutable) */ __webpack_exports__["c"] = getPalette;
 
@@ -10542,14 +10550,16 @@ const postPalette = (palette, projectId) => {
   return fetch(`/api/v1/projects/${projectId}/palettes`, {
     method: 'post',
     body: JSON.stringify(palette),
-    headers: { 'Content-Type': 'application/json' }
-  }).then(response => response.json()).then(parsedResponse => parsedResponse);
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then(response => response.json()).then(parsedResponse => parsedResponse).catch(error => error);
 };
 /* harmony export (immutable) */ __webpack_exports__["e"] = postPalette;
 
 
 const deletePalette = (projectId, paletteId) => {
-  return fetch(`/api/v1/projects/${projectId}/palettes/${paletteId}`, { method: 'delete' }).then(response => response.json()).then(parsedResponse => parsedResponse);
+  return fetch(`/api/v1/projects/${projectId}/palettes/${paletteId}`, { method: 'delete' }).then(response => response.json()).then(parsedResponse => parsedResponse).catch(error => error);
 };
 /* harmony export (immutable) */ __webpack_exports__["a"] = deletePalette;
 
