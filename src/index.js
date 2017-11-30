@@ -143,6 +143,7 @@ const selectPalette = (e) => {
   $(palette).each( (i, color) => {
     colors = [...colors, $(color).data('color')];
   });
+  currentColors = [...colors];
   colors.forEach( (color, i) => {
     setOneColor(color, i+1);
   });

@@ -200,6 +200,7 @@ const selectPalette = e => {
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()(palette).each((i, color) => {
     colors = [...colors, __WEBPACK_IMPORTED_MODULE_0_jquery___default()(color).data('color')];
   });
+  currentColors = [...colors];
   colors.forEach((color, i) => {
     setOneColor(color, i + 1);
   });

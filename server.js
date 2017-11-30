@@ -18,10 +18,9 @@ const generateRandomName = () => {
   const noun = nouns[Math.floor(Math.random() * nouns.length)];
   const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
   return `${adjective} ${noun}`;
-}
+};
 
 app.get('/api/v1/projects', (request, response) => {
-  console.log(adjectives.length);
   database('projects').select()
     .then((projects) => {
       const sendBack = Object.assign(
