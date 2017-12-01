@@ -1,19 +1,31 @@
 const express = require('express');
+//import express lib
 const environment = process.env.NODE_ENV || 'development';
+//set environment to running env or development
 const configuration = require('./knexfile')[environment];
+//import knex configuration for environment
 const database = require('knex')(configuration);
+//import knex with current configuration
 const app = express();
+//create new instance of express app
 const bodyParser = require('body-parser');
+//import body parser for JSON
 const generateRandomName = require('random-name-generator');
+//import my random name generator for fun and entertaining palette and project name suggestions
 
 app.use(bodyParser.json());
+//use body parser to parse all JSON objects
 app.use(bodyParser.urlencoded({ extended: true }));
+//set what bodies body parser should parse
 app.use(express.static(__dirname + '/public'));
+//serve static assets from /public dir
 app.set('port', process.env.PORT || 3000);
+//set the port to run on to the env port or 3000
 
 app.locals.title = 'Palette Picker';
-
+//give the app a name
 app.get('/api/v1/projects', (request, response) => {
+  //
   database('projects').select()
     .then((projects) => {
       const sendBack = Object.assign(
