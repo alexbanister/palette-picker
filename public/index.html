@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>PalettePicker</title>
@@ -31,7 +31,7 @@
       <div class="color-hex">
         <h3>#ffffff</h3>
         <span class="lock">
-          <img src="images/keep.svg" alt="" />
+          <img src="images/unlocked.svg" alt="" />
         </span>
       </div>
     </article>
@@ -57,7 +57,7 @@
       <div class="color-hex">
         <h3>#ffffff</h3>
         <span class="lock">
-          <img src="images/keep.svg" alt="" />
+          <img src="images/unlocked.svg" alt="" />
         </span>
       </div>
     </article>
@@ -83,7 +83,7 @@
       <div class="color-hex">
         <h3>#ffffff</h3>
         <span class="lock">
-          <img src="images/keep.svg" alt="" />
+          <img src="images/unlocked.svg" alt="" />
         </span>
       </div>
     </article>
@@ -109,7 +109,7 @@
       <div class="color-hex">
         <h3>#ffffff</h3>
         <span class="lock">
-          <img src="images/keep.svg" alt="" />
+          <img src="images/unlocked.svg" alt="" />
         </span>
       </div>
     </article>
@@ -135,7 +135,7 @@
       <div class="color-hex">
         <h3>#ffffff</h3>
         <span class="lock">
-          <img src="images/keep.svg" alt="" />
+          <img src="images/unlocked.svg" alt="" />
         </span>
       </div>
     </article>
@@ -145,7 +145,7 @@
     <button type="button" name="shuffle-colors">Shuffle Colors</button>
     <section>
       <h3>Palette</h3>
-      <form>
+      <form name="new-palette-form">
         <label for="palette-name">Name:</label>
         <input type="text" name="palette-name" value="">
         <div class="current-palette">
@@ -155,6 +155,9 @@
           <span class="color-swatch color4"></span>
           <span class="color-swatch color5"></span>
         </div>
+        <div class="unique-error">
+          Palette name must be unique
+        </div>
         <button type="submit" name="save-palette">Save Palette</button>
       </form>
       <div class="loading save-palette-area">
@@ -163,9 +166,12 @@
     </section>
     <section>
       <h3>Projects</h3>
-      <form>
+      <form name="new-project-form">
         <label for="new-project">Create New Project:</label>
         <input type="text" name="new-project" value="" />
+        <div class="unique-error new-project-error">
+          Project name must be unique
+        </div>
         <button type="submit" name="create-project">Create New Project</button>
       </form>
       <label for="current-project">Current Project:</label>
@@ -191,6 +197,13 @@
       </div>
     </section>
   </aside>
-  <script src="javascript.js"></script>
+  <div class="error-overlay">
+    <div class="error-block">
+      <h3>Oh No! Something went all pear shaped</h3>
+      <p></p>
+      <button type="button" name="acknowledge-error">Got It!</button>
+    </div>
+  </div>
+  <script src="js/javascript.js"></script>
   </body>
 </html>

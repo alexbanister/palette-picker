@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "./node_modules/webpack/bin/webpack.js",
-    "css": "sass --watch public/style.scss:public/style.css"
+    "css": "sass --watch public/css/style.scss:public/css/style.css"
   },
   "keywords": [],
   "author": "",
@@ -16,7 +16,8 @@
     "express": "^4.16.2",
     "jquery": "^3.2.1",
     "knex": "^0.14.2",
-    "pg": "^7.4.0"
+    "pg": "^7.4.0",
+    "random-name-generator": "git+https://github.com/alexbanister/randomNameGenerator.git"
   },
   "devDependencies": {
     "babel": "^6.5.2",

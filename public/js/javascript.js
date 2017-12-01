@@ -77,6 +77,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 var lockedPositions = [];
 var currentColors = [];
+var paletteNames = [];
+var projectNames = [];
 
 const generateColor = () => {
   const red = generateColorValue();
@@ -116,7 +118,7 @@ const toggleLocked = e => {
   const locked = lockedPositions.find(pos => pos === position);
   if (locked) {
     lockedPositions = lockedPositions.filter(pos => pos !== position);
-    __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-id=' + position + ']').find('img').attr('src', 'images/keep.svg');
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-id=' + position + ']').find('img').attr('src', 'images/unlocked.svg');
   } else {
     lockedPositions = [...lockedPositions, position];
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[data-id=' + position + ']').find('img').attr('src', 'images/locked.svg');
@@ -125,6 +127,10 @@ const toggleLocked = e => {
 
 const buildProjectsMenu = async () => {
   const allProjects = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["d" /* getProjects */])();
+  if (allProjects.error) {
+    setErrorMessage(allProjects.error);
+    return;
+  }
   allProjects.projects.forEach(project => {
     renderProjectInMenu(project);
   });
@@ -134,6 +140,7 @@ const buildProjectsMenu = async () => {
 };
 
 const renderProjectInMenu = project => {
+  projectNames = [...projectNames, project.name];
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').append(__WEBPACK_IMPORTED_MODULE_0_jquery___default()('<option>', {
     value: project.id,
     text: project.name,
@@ -144,6 +151,10 @@ const renderProjectInMenu = project => {
 const loadPalettes = async projectId => {
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palettes').html('');
   const currentProjectPalette = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["c" /* getPalette */])(projectId);
+  if (currentProjectPalette.error) {
+    setErrorMessage(currentProjectPalette.error);
+    return;
+  }
   if (!currentProjectPalette.length) {
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palettes').html('<h4>This Project has no palettes</h4>');
   } else {
@@ -154,6 +165,7 @@ const loadPalettes = async projectId => {
 };
 
 const renderPalette = palette => {
+  paletteNames = [...paletteNames, palette.name];
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palettes').find('h4').remove();
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palette-template').clone(true).prependTo('.palettes').removeClass('palette-template').addClass('project-palettes').css('display', 'none').slideDown('slow').data('paletteId', palette.id).data('projectId', palette.projectId).find('h5').text(palette.name).closest('div').find('.color-swatch').each((i, element) => {
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()(element).css('background', palette[`color${i + 1}`]).data('color', palette[`color${i + 1}`]);
@@ -167,6 +179,28 @@ const setLoading = section => {
 const clearLoading = section => {
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()(section).css('display', 'none');
 };
+
+const setErrorMessage = error => {
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.error-block').find('p').text(error);
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.error-overlay').css('display', 'flex');
+};
+
+const clearErrorMessage = () => {
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.error-overlay').css('display', 'none');
+  clearLoading('.save-palette-area');
+  clearLoading('.create-project-area');
+};
+
+const checkPaletteUniqueness = (name, currentNames, section) => {
+  if (currentNames.includes(name)) {
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()(`[name="new-${section}-form"]`).find('.unique-error').slideDown();
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()(`[name="new-${section}-form"]`).find('button').prop('disabled', true);
+  } else {
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()(`[name="new-${section}-form"]`).find('.unique-error').slideUp();
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()(`[name="new-${section}-form"]`).find('button').prop('disabled', false);
+  }
+};
+
 const savePalette = async e => {
   e.preventDefault();
   setLoading('.save-palette-area');
@@ -176,7 +210,11 @@ const savePalette = async e => {
   for (let i = 1; i <= 5; i++) {
     palette = Object.assign(palette, { [`color${i}`]: currentColors[i - 1] });
   }
-  const { id, randomPaletteName } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["e" /* postPalette */])(palette, __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val());
+  const { id, randomPaletteName, error } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["e" /* postPalette */])(palette, __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val());
+  if (error) {
+    setErrorMessage(error);
+    return;
+  }
   palette = Object.assign(palette, { id });
   renderPalette(palette);
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="palette-name"]').val(randomPaletteName);
@@ -187,7 +225,11 @@ const createProject = async e => {
   e.preventDefault();
   setLoading('.create-project-area');
   const name = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="new-project"]').val();
-  const { id, randomProjectName } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["f" /* postProjects */])(name);
+  const { id, randomProjectName, error } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["f" /* postProjects */])(name);
+  if (error) {
+    setErrorMessage(error);
+    return;
+  }
   renderProjectInMenu({ name, id });
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palettes').html('<h4>This Project has no palettes</h4>');
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="new-project"]').val(randomProjectName);
@@ -200,6 +242,7 @@ const selectPalette = e => {
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()(palette).each((i, color) => {
     colors = [...colors, __WEBPACK_IMPORTED_MODULE_0_jquery___default()(color).data('color')];
   });
+  currentColors = [...colors];
   colors.forEach((color, i) => {
     setOneColor(color, i + 1);
   });
@@ -209,8 +252,14 @@ const destroyPalette = async e => {
   setLoading('.create-project-area');
   const palette = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(e.target).closest('div');
   const paletteId = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(palette).data('paletteId');
+  const paletteTitle = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(palette).find('h5').text();
   const projectId = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val();
-  await Object(__WEBPACK_IMPORTED_MODULE_1__api__["a" /* deletePalette */])(projectId, paletteId);
+  const { error } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["a" /* deletePalette */])(projectId, paletteId);
+  if (error) {
+    setErrorMessage(error);
+    return;
+  }
+  paletteNames = paletteNames.filter(palette => palette !== paletteTitle);
   removePalette(palette);
   clearLoading('.create-project-area');
 };
@@ -224,8 +273,14 @@ const removePalette = palette => {
 
 const destroyProject = async () => {
   setLoading('.create-project-area');
-  const { id } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["b" /* deleteProjects */])(__WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val());
-  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').find(`[value="${id}"]`).remove();
+  const { error } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["b" /* deleteProjects */])(__WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val());
+  if (error) {
+    setErrorMessage(error);
+    return;
+  }
+  const projectTitle = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"] option:selected').text();
+  projectNames = projectNames.filter(project => project !== projectTitle);
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"] option:selected').remove();
   loadPalettes(__WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val());
   clearLoading('.create-project-area');
 };
@@ -241,9 +296,16 @@ __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="create-project"]').on('cl
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').on('change', e => {
   loadPalettes(e.target.value);
 });
+__WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="palette-name"]').on('keyup', e => {
+  checkPaletteUniqueness(e.target.value, paletteNames, 'palette');
+});
+__WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="new-project"]').on('keyup', e => {
+  checkPaletteUniqueness(e.target.value, projectNames, 'project');
+});
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palette-select, .current-palette, .palette-title').on('click', selectPalette);
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palette-delete').on('click', destroyPalette);
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="delete-project"]').on('click', destroyProject);
+__WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="acknowledge-error"]').on('click', clearErrorMessage);
 
 /***/ }),
 /* 1 */
@@ -10511,7 +10573,7 @@ return jQuery;
 
 "use strict";
 const getProjects = () => {
-  return fetch('/api/v1/projects').then(response => response.json()).then(parsedResponse => parsedResponse);
+  return fetch('/api/v1/projects').then(response => response.json()).then(parsedResponse => parsedResponse).catch(error => error);
 };
 /* harmony export (immutable) */ __webpack_exports__["d"] = getProjects;
 
@@ -10520,19 +10582,21 @@ const postProjects = name => {
   return fetch('/api/v1/projects', {
     method: 'post',
     body: JSON.stringify({ name }),
-    headers: { 'Content-Type': 'application/json' }
-  }).then(response => response.json()).then(parsedResponse => parsedResponse);
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then(response => response.json()).then(parsedResponse => parsedResponse).catch(error => error);
 };
 /* harmony export (immutable) */ __webpack_exports__["f"] = postProjects;
 
 const deleteProjects = projectId => {
-  return fetch(`/api/v1/projects/${projectId}`, { method: 'delete' }).then(response => response.json()).then(parsedResponse => parsedResponse);
+  return fetch(`/api/v1/projects/${projectId}`, { method: 'delete' }).then(response => response.json()).then(parsedResponse => parsedResponse).catch(error => error);
 };
 /* harmony export (immutable) */ __webpack_exports__["b"] = deleteProjects;
 
 
 const getPalette = projectId => {
-  return fetch(`/api/v1/projects/${projectId}/palettes`).then(response => response.json()).then(parsedResponse => parsedResponse);
+  return fetch(`/api/v1/projects/${projectId}/palettes`).then(response => response.json()).then(parsedResponse => parsedResponse).catch(error => error);
 };
 /* harmony export (immutable) */ __webpack_exports__["c"] = getPalette;
 
@@ -10541,14 +10605,16 @@ const postPalette = (palette, projectId) => {
   return fetch(`/api/v1/projects/${projectId}/palettes`, {
     method: 'post',
     body: JSON.stringify(palette),
-    headers: { 'Content-Type': 'application/json' }
-  }).then(response => response.json()).then(parsedResponse => parsedResponse);
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then(response => response.json()).then(parsedResponse => parsedResponse).catch(error => error);
 };
 /* harmony export (immutable) */ __webpack_exports__["e"] = postPalette;
 
 
 const deletePalette = (projectId, paletteId) => {
-  return fetch(`/api/v1/projects/${projectId}/palettes/${paletteId}`, { method: 'delete' }).then(response => response.json()).then(parsedResponse => parsedResponse);
+  return fetch(`/api/v1/projects/${projectId}/palettes/${paletteId}`, { method: 'delete' }).then(response => response.json()).then(parsedResponse => parsedResponse).catch(error => error);
 };
 /* harmony export (immutable) */ __webpack_exports__["a"] = deletePalette;
 

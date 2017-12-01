@@ -98,6 +98,13 @@ aside {
     transition: all 250ms ease; }
     aside button:hover {
       background: #aaaaaa; }
+    aside button:disabled {
+      cursor: auto;
+      background: #dddddd;
+      color: #eeeeee; }
+      aside button:disabled:hover {
+        background: #dddddd;
+        color: #eeeeee; }
   aside button[name="shuffle-colors"] {
     background: #232323;
     color: #eeeeee;
@@ -140,6 +147,11 @@ aside {
     color: #eeeeee; }
   aside .palette-template {
     display: none; }
+  aside .unique-error {
+    padding: .5rem;
+    color: #eb1616;
+    font-weight: bold;
+    display: none; }
 
 .loading {
   border-radius: 1rem;
@@ -158,6 +170,42 @@ aside {
 
 .create-project-area, .save-palette-area {
   display: none; }
+
+.error-overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  display: none; }
+
+.error-block {
+  background: #eeeeee;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1rem;
+  padding: 2rem;
+  width: 30%; }
+  .error-block h3 {
+    font-size: 1.75rem;
+    margin: 1rem;
+    text-align: center; }
+  .error-block button {
+    width: 50%;
+    height: 3rem;
+    font-size: 1.5rem;
+    border-radius: 1.5rem;
+    margin: 1rem;
+    cursor: pointer; }
+    .error-block button:hover {
+      background: #232323;
+      color: #eeeeee; }
 
 .color1, .color2, .color3, .color4, .color5 {
   background: #ffffff;
