@@ -77,6 +77,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 var lockedPositions = [];
 var currentColors = [];
+var paletteNames = [];
+var projectNames = [];
 
 const generateColor = () => {
   const red = generateColorValue();
@@ -138,6 +140,7 @@ const buildProjectsMenu = async () => {
 };
 
 const renderProjectInMenu = project => {
+  projectNames = [...projectNames, project.name];
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').append(__WEBPACK_IMPORTED_MODULE_0_jquery___default()('<option>', {
     value: project.id,
     text: project.name,
@@ -162,6 +165,7 @@ const loadPalettes = async projectId => {
 };
 
 const renderPalette = palette => {
+  paletteNames = [...paletteNames, palette.name];
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palettes').find('h4').remove();
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palette-template').clone(true).prependTo('.palettes').removeClass('palette-template').addClass('project-palettes').css('display', 'none').slideDown('slow').data('paletteId', palette.id).data('projectId', palette.projectId).find('h5').text(palette.name).closest('div').find('.color-swatch').each((i, element) => {
     __WEBPACK_IMPORTED_MODULE_0_jquery___default()(element).css('background', palette[`color${i + 1}`]).data('color', palette[`color${i + 1}`]);
@@ -185,6 +189,16 @@ const clearErrorMessage = () => {
   __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.error-overlay').css('display', 'none');
   clearLoading('.save-palette-area');
   clearLoading('.create-project-area');
+};
+
+const checkPaletteUniqueness = (name, currentNames, section) => {
+  if (currentNames.includes(name)) {
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()(`[name="new-${section}-form"]`).find('.unique-error').slideDown();
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()(`[name="new-${section}-form"]`).find('button').prop('disabled', true);
+  } else {
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()(`[name="new-${section}-form"]`).find('.unique-error').slideUp();
+    __WEBPACK_IMPORTED_MODULE_0_jquery___default()(`[name="new-${section}-form"]`).find('button').prop('disabled', false);
+  }
 };
 
 const savePalette = async e => {
@@ -238,12 +252,14 @@ const destroyPalette = async e => {
   setLoading('.create-project-area');
   const palette = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(e.target).closest('div');
   const paletteId = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(palette).data('paletteId');
+  const paletteTitle = __WEBPACK_IMPORTED_MODULE_0_jquery___default()(palette).find('h5').text();
   const projectId = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val();
   const { error } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["a" /* deletePalette */])(projectId, paletteId);
   if (error) {
     setErrorMessage(error);
     return;
   }
+  paletteNames = paletteNames.filter(palette => palette !== paletteTitle);
   removePalette(palette);
   clearLoading('.create-project-area');
 };
@@ -257,12 +273,14 @@ const removePalette = palette => {
 
 const destroyProject = async () => {
   setLoading('.create-project-area');
-  const { id, error } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["b" /* deleteProjects */])(__WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val());
+  const { error } = await Object(__WEBPACK_IMPORTED_MODULE_1__api__["b" /* deleteProjects */])(__WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val());
   if (error) {
     setErrorMessage(error);
     return;
   }
-  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').find(`[value="${id}"]`).remove();
+  const projectTitle = __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"] option:selected').text();
+  projectNames = projectNames.filter(project => project !== projectTitle);
+  __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"] option:selected').remove();
   loadPalettes(__WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').val());
   clearLoading('.create-project-area');
 };
@@ -277,6 +295,12 @@ __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="save-palette"]').on('clic
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="create-project"]').on('click', createProject);
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="current-project"]').on('change', e => {
   loadPalettes(e.target.value);
+});
+__WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="palette-name"]').on('keyup', e => {
+  checkPaletteUniqueness(e.target.value, paletteNames, 'palette');
+});
+__WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="new-project"]').on('keyup', e => {
+  checkPaletteUniqueness(e.target.value, projectNames, 'project');
 });
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palette-select, .current-palette, .palette-title').on('click', selectPalette);
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palette-delete').on('click', destroyPalette);

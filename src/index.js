@@ -9,6 +9,8 @@ import {
 
 var lockedPositions = [];
 var currentColors = [];
+var paletteNames = [];
+var projectNames = [];
 
 const generateColor = () => {
   const red = generateColorValue();
@@ -70,6 +72,7 @@ const buildProjectsMenu = async () => {
 };
 
 const renderProjectInMenu = (project) => {
+  projectNames = [...projectNames, project.name];
   $('[name="current-project"]').append($('<option>', {
     value: project.id,
     text: project.name,
@@ -94,6 +97,7 @@ const loadPalettes = async (projectId) => {
 };
 
 const renderPalette = (palette) => {
+  paletteNames = [...paletteNames, palette.name];
   $('.palettes').find('h4').remove();
   $('.palette-template').clone(true)
     .prependTo('.palettes')
@@ -128,6 +132,16 @@ const clearErrorMessage = () => {
   $('.error-overlay').css('display', 'none');
   clearLoading('.save-palette-area');
   clearLoading('.create-project-area');
+};
+
+const checkPaletteUniqueness = (name, currentNames, section) => {
+  if (currentNames.includes(name)) {
+    $(`[name="new-${section}-form"]`).find('.unique-error').slideDown();
+    $(`[name="new-${section}-form"]`).find('button').prop('disabled', true);
+  } else {
+    $(`[name="new-${section}-form"]`).find('.unique-error').slideUp();
+    $(`[name="new-${section}-form"]`).find('button').prop('disabled', false);
+  }
 };
 
 const savePalette = async (e) => {
@@ -181,12 +195,14 @@ const destroyPalette = async (e) => {
   setLoading('.create-project-area');
   const palette = $(e.target).closest('div');
   const paletteId = $(palette).data('paletteId');
+  const paletteTitle = $(palette).find('h5').text();
   const projectId = $('[name="current-project"]').val();
   const { error } = await deletePalette(projectId, paletteId);
   if (error) {
     setErrorMessage(error);
     return;
   }
+  paletteNames = paletteNames.filter( palette => palette !== paletteTitle);
   removePalette(palette);
   clearLoading('.create-project-area');
 };
@@ -200,12 +216,14 @@ const removePalette = (palette) => {
 
 const destroyProject = async () => {
   setLoading('.create-project-area');
-  const { id, error } = await deleteProjects($('[name="current-project"]').val());
+  const { error } = await deleteProjects($('[name="current-project"]').val());
   if (error) {
     setErrorMessage(error);
     return;
   }
-  $('[name="current-project"]').find(`[value="${id}"]`).remove();
+  const projectTitle = $('[name="current-project"] option:selected').text();
+  projectNames = projectNames.filter( project => project !== projectTitle);
+  $('[name="current-project"] option:selected').remove();
   loadPalettes($('[name="current-project"]').val());
   clearLoading('.create-project-area');
 };
@@ -220,6 +238,12 @@ $('[name="save-palette"]').on('click', savePalette);
 $('[name="create-project"]').on('click', createProject);
 $('[name="current-project"]').on('change', (e) => {
   loadPalettes(e.target.value);
+});
+$('[name="palette-name"]').on('keyup', (e) => {
+  checkPaletteUniqueness(e.target.value, paletteNames, 'palette');
+});
+$('[name="new-project"]').on('keyup', (e) => {
+  checkPaletteUniqueness(e.target.value, projectNames, 'project');
 });
 $('.palette-select, .current-palette, .palette-title').on('click', selectPalette);
 $('.palette-delete').on('click', destroyPalette);
