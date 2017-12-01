@@ -99,3 +99,5 @@ app.listen(app.get('port'), () => {
   // eslint-disable-next-line no-console
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
 });
+
+module.exports = app;
