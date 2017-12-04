@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "lint": "./node_modules/.bin/eslint ./",
     "test": "NODE_ENV=test mocha --exit",
     "build": "./node_modules/webpack/bin/webpack.js",
     "css": "sass --watch public/css/style.scss:public/css/style.css"
