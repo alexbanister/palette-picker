@@ -4,7 +4,6 @@ export const getProjects = () => {
   .then(parsedResponse => parsedResponse)
   .catch(error => error);
 };
-
 export const postProjects = (name) => {
   return fetch('/api/v1/projects', {
     method: 'post',
