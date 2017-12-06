@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const generateRandomName = require('random-name-generator');
 
 app.use((request, response, next) => {
-  if (!/https/.test(request.protocol)){
+  if (!/https/.test(request.protocol) && environment === 'production'){
     response.redirect('https://' + request.headers.host + request.url);
   } else {
     return next();
