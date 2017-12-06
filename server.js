@@ -7,7 +7,8 @@ const bodyParser = require('body-parser');
 const generateRandomName = require('random-name-generator');
 
 const requireHTTPS = (request, response, next) => {
-  if (request.header('x-forwarded-proto') !== 'https') {
+  // eslint-disable-next-line eqeqeq
+  if (request.header('x-forwarded-proto') != 'https') {
     response.redirect('https://' + request.header('host') + request.url, next);
   } else {
     return next();
