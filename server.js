@@ -6,6 +6,13 @@ const app = express();
 const bodyParser = require('body-parser');
 const generateRandomName = require('random-name-generator');
 
+app.use((request, response, next) => {
+  if (!/https/.test(request.protocol)){
+    response.redirect('https://' + request.headers.host + request.url);
+  } else {
+    return next();
+  }
+});
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
