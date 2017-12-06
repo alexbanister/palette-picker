@@ -9,10 +9,9 @@ const generateRandomName = require('random-name-generator');
 const requireHTTPS = (request, response, next) => {
   // eslint-disable-next-line eqeqeq
   if (request.header('x-forwarded-proto') != 'https') {
-    response.redirect('https://' + request.header('host') + request.url, next);
-  } else {
-    return next();
+    return response.redirect(`https://${request.header('host')}${request.url}`);
   }
+  next();
 };
 if (process.env.NODE_ENV === 'production') { app.use(requireHTTPS); }
 
