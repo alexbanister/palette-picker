@@ -1,0 +1,30 @@
+{
+  "short_name": "palettePicker",
+  "name": "Get super awesome color palettes",
+  "background_color": "#eeeeee",
+  "theme_color": "#232323",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "images/icon_48.jpeg",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "images/icon_48.jpeg",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "images/icon_48.jpeg",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "images/icon_48.jpeg",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "index.html"
+}
