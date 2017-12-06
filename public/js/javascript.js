@@ -307,6 +307,12 @@ __WEBPACK_IMPORTED_MODULE_0_jquery___default()('.palette-delete').on('click', de
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="delete-project"]').on('click', destroyProject);
 __WEBPACK_IMPORTED_MODULE_0_jquery___default()('[name="acknowledge-error"]').on('click', clearErrorMessage);
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').then(registration => registration).catch(error => error);
+  });
+}
+
 /***/ }),
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -10576,7 +10582,6 @@ const getProjects = () => {
   return fetch('/api/v1/projects').then(response => response.json()).then(parsedResponse => parsedResponse).catch(error => error);
 };
 /* harmony export (immutable) */ __webpack_exports__["d"] = getProjects;
-
 
 const postProjects = name => {
   return fetch('/api/v1/projects', {

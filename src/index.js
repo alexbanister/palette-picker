@@ -249,3 +249,11 @@ $('.palette-select, .current-palette, .palette-title').on('click', selectPalette
 $('.palette-delete').on('click', destroyPalette);
 $('[name="delete-project"]').on('click', destroyProject);
 $('[name="acknowledge-error"]').on('click', clearErrorMessage);
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then( registration => registration)
+      .catch( error => error);
+  });
+}
