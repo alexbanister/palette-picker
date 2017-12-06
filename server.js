@@ -6,13 +6,15 @@ const app = express();
 const bodyParser = require('body-parser');
 const generateRandomName = require('random-name-generator');
 
-app.use((request, response, next) => {
-  if (!/https/.test(request.protocol) && environment === 'production'){
-    response.redirect('https://' + request.headers.host + request.url);
+const requireHTTPS = (request, response, next) => {
+  if (request.header('x-forwarded-proto') !== 'https') {
+    response.redirect('https://' + request.header('host') + request.url, next);
   } else {
     return next();
   }
-});
+};
+if (process.env.NODE_ENV === 'production') { app.use(requireHTTPS); }
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
