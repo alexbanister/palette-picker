@@ -6,6 +6,10 @@ import {
   postPalette,
   deleteProjects,
   deletePalette } from './api';
+import {
+  saveOfflineProjects,
+  saveOfflinePalettes
+} from './indexedDB';
 
 var lockedPositions = [];
 var currentColors = [];
@@ -151,7 +155,7 @@ const savePalette = async (e) => {
     name: $('[name="palette-name"]').val()
   };
   for (let i = 1; i <= 5; i++) {
-    palette = Object.assign(palette, { [`color${i}`]: currentColors[i-1] });
+    palette = Object.assign(palette, { [`color${i}`]: currentColors[i-1] }, { project_id: $('[name="current-project"]').val()});
   }
   const { id, randomPaletteName, error } = await postPalette(palette, $('[name="current-project"]').val());
   if (error) {
@@ -159,7 +163,10 @@ const savePalette = async (e) => {
     return;
   }
   palette = Object.assign(palette, { id });
-  renderPalette(palette);
+  saveOfflinePalettes(palette)
+    .then(() => renderPalette(palette))
+    .catch(error => error);
+
   $('[name="palette-name"]').val(randomPaletteName);
   clearLoading('.save-palette-area');
 };
@@ -173,7 +180,10 @@ const createProject = async (e) => {
     setErrorMessage(error);
     return;
   }
-  renderProjectInMenu({ name, id });
+  saveOfflineProjects({ id, name })
+    .then(() => {
+      renderProjectInMenu({ id, name });
+    });
   $('.palettes').html('<h4>This Project has no palettes</h4>');
   $('[name="new-project"]').val(randomProjectName);
   clearLoading('.create-project-area');
@@ -251,6 +261,16 @@ $('[name="delete-project"]').on('click', destroyProject);
 $('[name="acknowledge-error"]').on('click', clearErrorMessage);
 
 if ('serviceWorker' in navigator) {
+  // loadOfflinePalettes()
+  //   .then(palettes => {
+  //     palettes.forEach( palette => {
+  //       renderPalette(palette);
+  //     });
+  //   })
+  //   .catch(error => error);
+  //
+
+
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./service-worker.js')
       .then( registration => registration)

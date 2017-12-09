@@ -1,8 +1,17 @@
+import {
+  loadOfflinePalettes,
+  loadOfflineProjects
+} from './indexedDB';
+
 export const getProjects = () => {
   return fetch('/api/v1/projects')
   .then(response => response.json())
   .then(parsedResponse => parsedResponse)
-  .catch(error => error);
+  .catch(() => {
+    return loadOfflineProjects()
+      .then(projects => ({ projects }))
+      .catch(error => error);
+  });
 };
 export const postProjects = (name) => {
   return fetch('/api/v1/projects', {
@@ -19,7 +28,14 @@ export const deleteProjects = (projectId) => {
 };
 
 export const getPalette = (projectId) => {
-  return fetch(`/api/v1/projects/${projectId}/palettes`).then(response => response.json()).then(parsedResponse => parsedResponse).catch(error => error);
+  return fetch(`/api/v1/projects/${projectId}/palettes`)
+    .then(response => response.json())
+    .then(parsedResponse => parsedResponse)
+    .catch(() => {
+      return loadOfflinePalettes(projectId)
+        .then(palettes => palettes)
+        .catch(error => error);
+    });
 };
 
 export const postPalette = (palette, projectId) => {
